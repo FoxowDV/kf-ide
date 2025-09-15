@@ -27,14 +27,17 @@ impl eframe::App for Splash {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("KF IDE");
-            
-            
+
             ui.label("Desarolladores: ");
 
             ui.label("Kelpie Athenea Alcalá Padilla");
             ui.label("Daniel Aldahir Amador Ramírez");
 
             ui.add_space(20.0);
+
+            ui.image(egui::include_image!("../resources/foxoakira.png"));
+
+            
         });
 
     }
