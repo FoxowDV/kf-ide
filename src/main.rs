@@ -12,6 +12,9 @@ use splash::Splash;
 
 fn main() -> Result<(), eframe::Error> {
    let options_splash = eframe::NativeOptions {
+       viewport: egui::ViewportBuilder::default()
+           .with_inner_size([800.0, 400.0])
+           .with_resizable(false),
         ..Default::default()
     };
 
