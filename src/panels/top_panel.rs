@@ -1,6 +1,11 @@
 use eframe::egui;
 
 pub fn show(ctx: &egui::Context) {
+
+    let mut new_style = (*ctx.style()).clone();
+    new_style.visuals.panel_fill = egui::Color32::from_rgb(230, 230, 230);
+    ctx.set_style(new_style);
+
     egui::TopBottomPanel::top("top_menu_bar").show(ctx, |ui| {
         // Menu bar
         egui::MenuBar::new().ui(ui, |ui| {
@@ -98,16 +103,16 @@ fn show_toolbar(ui: &mut egui::Ui) {
     let image_size = egui::vec2(24.0, 24.0);
     
     // Load all images
-    let new_file_image = egui::include_image!("../../resources/new_file.svg");
-    let open_file_image = egui::include_image!("../../resources/open_file.svg");
-    let save_all_file_image = egui::include_image!("../../resources/save_all_file.svg");
-    let save_as_file_image = egui::include_image!("../../resources/save_as_file.svg");
-    let save_file_image = egui::include_image!("../../resources/save_file.svg");
+    let new_file_image = egui::include_image!("../../resources/new-file.svg");
+    let open_file_image = egui::include_image!("../../resources/open-file.svg");
+    let save_all_file_image = egui::include_image!("../../resources/content-save-all.svg");
+    let save_as_file_image = egui::include_image!("../../resources/save-as-outline.svg");
+    let save_file_image = egui::include_image!("../../resources/save.svg");
     let copy_image = egui::include_image!("../../resources/copy.svg");
     let cut_image = egui::include_image!("../../resources/cut.svg");
     let paste_image = egui::include_image!("../../resources/paste.svg");
-    let compile_image = egui::include_image!("../../resources/compile.svg");
-    let compile_and_run_image = egui::include_image!("../../resources/compile_and_run.svg");
+    let compile_image = egui::include_image!("../../resources/compliance.svg");
+    let compile_and_run_image = egui::include_image!("../../resources/run-all.svg");
 
     ui.horizontal(|ui| {
         if ui.add(egui::Button::image(egui::Image::new(new_file_image).fit_to_exact_size(image_size))
