@@ -6,8 +6,14 @@ pub fn show(ctx: &egui::Context) {
         .default_height(200.0)
         .min_height(64.0)
         .show(ctx, |ui| {
-            ui.horizontal_centered(|ui| {
-                ui.label("Hello ");
-            });
+
+            //ui.add(
+            let mut content = String::from("** Generación correcta del analizador léxico **\nArchivo guardado en /home/wallace/Documents/");
+                _ = egui::TextEdit::multiline(&mut content)
+                .code_editor()
+                .min_size(ui.available_size())
+                .desired_width(f32::INFINITY)
+                .show(ui)
+             //   )
         });
 }

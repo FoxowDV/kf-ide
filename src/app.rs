@@ -68,6 +68,7 @@ impl App {
             .min_height(32.0)
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
+                    //ui.visuals_mut().button_framw = Some(egui::Color32::RED);
                     let mut tab_to_close = None;
 
                     for (i, doc) in self.documents.iter().enumerate() {

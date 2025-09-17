@@ -14,6 +14,7 @@ pub fn show(ctx: &egui::Context) {
 fn show_top_panel(ui: &mut egui::Ui) {
     use egui_extras::{Column, TableBuilder};
     //let mut tokens_table = 
+    ui.visuals_mut().striped = true;
     TableBuilder::new(ui)
         .columns(Column::remainder(), 3)
         .header(30.0, |mut header| {
