@@ -79,7 +79,7 @@ impl App {
                 .fill(egui::Color32::from_rgb(230, 230, 230))
             )
             .show(ctx, |ui| {
-                ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                    ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                     let mut tab_to_close = None;
 
                     let tab_width = 120.0;
