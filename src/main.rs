@@ -4,6 +4,8 @@ mod document;
 
 mod app;
 mod panels;
+mod code_editor;
+
 
 use app::App;
 

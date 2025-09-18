@@ -16,7 +16,7 @@ impl Document {
         }
     }
 
-    pub fn open(name: String, content: String) -> Self {
+    pub fn _open(name: String, content: String) -> Self {
         Self {
             name,
             content,

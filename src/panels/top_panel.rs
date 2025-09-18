@@ -23,35 +23,46 @@ pub fn show(ctx: &egui::Context) {
 
 fn show_file_menu(ui: &mut egui::Ui) {
     ui.menu_button("File", |ui| {
-        if ui.button("New File").clicked() {
+        if ui.add(egui::Button::new("New File").shortcut_text("CTRL+N")).clicked() {
             println!("Nuevo");
             ui.close();
         }
-        if ui.button("Open").clicked() {
+        if ui.add(egui::Button::new("Open").shortcut_text("CTRL+O")).clicked() {
             println!("Abrir");
             ui.close();
         }
-        if ui.button("Save").clicked() {
+
+        ui.separator();
+
+        if ui.add(egui::Button::new("Save").shortcut_text("CTRL+S")).clicked() {
             println!("Guardar");
             ui.close();
         }
-        if ui.button("Save all").clicked() {
+        if ui.add(egui::Button::new("Save all").shortcut_text("CTRL+ALT+S")).clicked() {
             println!("Guardar todo");
             ui.close();
         }
-        if ui.button("Save as").clicked() {
+        if ui.add(egui::Button::new("Save as").shortcut_text("CTRL+SHIFT+S")).clicked() {
             println!("Guardar como");
             ui.close();
         }
-        if ui.button("Close project").clicked() {
+
+        ui.separator();
+
+        if ui.add(egui::Button::new("Close file").shortcut_text("CTRL+SHIFT+W")).clicked() {
             println!("Cerrar proyecto");
             ui.close();
         }
+
+
         if ui.button("Close all").clicked() {
             println!("Cerrar todo");
             ui.close();
         }
-        if ui.button("Quit").clicked() {
+
+        ui.separator();
+
+        if ui.add(egui::Button::new("Exit").shortcut_text("ALT+X")).clicked() {
             ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
         }
     });
@@ -59,15 +70,15 @@ fn show_file_menu(ui: &mut egui::Ui) {
 
 fn show_edit_menu(ui: &mut egui::Ui) {
     ui.menu_button("Edit", |ui| {
-        if ui.button("Copy").clicked() {
+        if ui.add(egui::Button::new("Copy").shortcut_text("CTRL+C")).clicked() {
             println!("Copiar");
             ui.close();
         }
-        if ui.button("Cut").clicked() {
+        if ui.add(egui::Button::new("Cut").shortcut_text("CTRL+X")).clicked() {
             println!("Cortar");
             ui.close();
         }
-        if ui.button("Paste").clicked() {
+        if ui.add(egui::Button::new("Paste").shortcut_text("CTRL+V")).clicked() {
             println!("Pegar");
             ui.close();
         }
@@ -76,11 +87,11 @@ fn show_edit_menu(ui: &mut egui::Ui) {
 
 fn show_compile_menu(ui: &mut egui::Ui) {
     ui.menu_button("Compile", |ui| {
-        if ui.button("Compile").clicked() {
+        if ui.add(egui::Button::new("Compile").shortcut_text("CTRL+SHIFT+B")).clicked() {
             println!("Compilar");
             ui.close();
         }
-        if ui.button("Compile and run").clicked() {
+        if ui.add(egui::Button::new("Compile and run").shortcut_text("CTRL+F6")).clicked() {
             println!("Compilar y correr");
             ui.close();
         }
@@ -106,7 +117,6 @@ fn show_toolbar(ui: &mut egui::Ui) {
     let new_file_image = egui::include_image!("../../resources/new-file.svg");
     let open_file_image = egui::include_image!("../../resources/open-file.svg");
     let save_all_file_image = egui::include_image!("../../resources/content-save-all.svg");
-    let save_as_file_image = egui::include_image!("../../resources/save-as-outline.svg");
     let save_file_image = egui::include_image!("../../resources/save.svg");
     let copy_image = egui::include_image!("../../resources/copy.svg");
     let cut_image = egui::include_image!("../../resources/cut.svg");
@@ -130,10 +140,6 @@ fn show_toolbar(ui: &mut egui::Ui) {
         if ui.add(egui::Button::image(egui::Image::new(save_all_file_image).fit_to_exact_size(image_size))
             .min_size(image_size)).clicked() {
             println!("save all file");    
-        }
-        if ui.add(egui::Button::image(egui::Image::new(save_as_file_image).fit_to_exact_size(image_size))
-            .min_size(image_size)).clicked() {
-            println!("save as file");    
         }
         if ui.add(egui::Button::image(egui::Image::new(copy_image).fit_to_exact_size(image_size))
             .min_size(image_size)).clicked() {

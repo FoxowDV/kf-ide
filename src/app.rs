@@ -1,6 +1,9 @@
 use eframe::egui;
-use crate::panels::{top_panel, right_panel, bottom_panel};
+
+use crate::panels::{top_panel, right_panel};
 use crate::document::Document;
+
+use crate::code_editor::CodeEditor;
 
 
 #[derive(Default)]
@@ -8,6 +11,8 @@ pub struct App {
     pub documents: Vec<Document>,
     pub active_tab: usize,
     pub next_document_id: usize,
+    c_line: usize,
+    c_col: usize,
 }
 
 impl App {
@@ -54,7 +59,7 @@ impl eframe::App for App {
 
         right_panel::show(ctx);
 
-        bottom_panel::show(ctx);
+        self.show_bottom(ctx);
 
         self.show_tabs(ctx);
         self.show_central_panel(ctx);
@@ -66,10 +71,17 @@ impl App {
         egui::TopBottomPanel::top("tabs_panel")
             .resizable(false)
             .min_height(32.0)
+            .frame(egui::Frame::default()
+                .outer_margin(0.0)
+                .inner_margin(0.0)
+                .fill(egui::Color32::from_rgb(230, 230, 230))
+            )
             .show(ctx, |ui| {
-                ui.horizontal(|ui| {
-                    //ui.visuals_mut().button_framw = Some(egui::Color32::RED);
+                ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                     let mut tab_to_close = None;
+
+                    let tab_width = 120.0;
+                    let tab_height = ui.available_height();
 
                     for (i, doc) in self.documents.iter().enumerate() {
                         // The name of each tab
@@ -78,22 +90,56 @@ impl App {
                         } else {
                             doc.name.clone()
                         };
-                        
+                    
+                        let is_active = self.active_tab == i;
 
-                        // Set the active tab when clicking the tab and show the label
-                        let tab_click = ui.selectable_label(self.active_tab == i, &tab_text);
-                        if tab_click.clicked() {
-                            self.active_tab = i;
-                        }
-                        
-                        // Create a new doc when all of them are closed
-                        let close_response = ui.small_button("×");
-                        if close_response.clicked() {
-                            tab_to_close = Some(i);
-                        }
-                        
-                        ui.separator();
-                    }
+                        // The tab group
+                        ui.allocate_ui_with_layout(
+                            egui::Vec2::new(tab_width, tab_height),
+                            egui::Layout::left_to_right(egui::Align::Center),
+                            |ui| {
+                                let tab_rect = ui.available_rect_before_wrap();
+                                let tab_color = if is_active {
+                                    egui::Color32::WHITE
+                                } else {
+                                    egui::Color32::from_rgb(230, 230, 230)
+                                };
+                            
+                                ui.painter().rect_filled(
+                                    tab_rect,
+                                    egui::CornerRadius::same(4),
+                                    tab_color
+                                );
+
+                                let button_response = ui.add_sized(
+                                    [tab_width - 25.0, tab_height],
+                                    egui::Button::new(&tab_text)
+                                        .fill(egui::Color32::TRANSPARENT)
+                                        .stroke(egui::Stroke::NONE)
+                                        .corner_radius(egui::CornerRadius::same(4))
+                                );
+
+                                if button_response.clicked() {
+                                    self.active_tab = i;
+                                }
+                            
+                                // Close button
+                                let close_response = ui.add_sized(
+                                    [16.0, tab_height],
+                                    egui::Button::new("×")
+                                        .fill(egui::Color32::TRANSPARENT)
+                                        .stroke(egui::Stroke::NONE)
+                                        .small()
+                                );
+
+                                if close_response.clicked() {
+                                    tab_to_close = Some(i);
+                                }
+                            }
+                        );
+                    
+                    ui.add_space(2.0);
+                }
                     
                     // Handle close tab
                     if let Some(index) = tab_to_close {
@@ -112,24 +158,74 @@ impl App {
     }
 
     fn show_central_panel(&mut self, ctx: &egui::Context) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            if let Some(doc) = self.get_active_document_mut() {
-                let prev_content = doc.content.clone();
+        egui::CentralPanel::default().
+            frame(egui::Frame::default()
+                .outer_margin(0.0)
+                .inner_margin(0.0)
+                .fill(egui::Color32::WHITE)
+                )
+            .show(ctx, |ui| {
+                if let Some(doc) = self.get_active_document_mut() {
+                    let prev_content = doc.content.clone();
+                    
+                    let (response, line, col) = CodeEditor::default()
+                        .id_source("code_editor")
+                        .with_ui_fontsize(ui)
+                        .with_rows(1)
+                        .show(ui, &mut doc.content);
 
-                let response = egui::TextEdit::multiline(&mut doc.content)
+
+
+                    if response.response.changed() {
+                        if doc.content != prev_content {
+                            doc.is_modified = true;
+                        }
+
+                    }
+
+                    response.response.context_menu(|ui| {
+                        if ui.button("Copy").clicked() {
+                            println!("Copy");
+                            ui.close();
+                        }
+                        if ui.button("Cut").clicked() {
+                            println!("Cut");
+                            ui.close();
+                        }
+                        if ui.button("Paste").clicked() {
+                            println!("Paste");
+                            ui.close();
+                        }
+
+                    });
+
+
+                    self.c_line = line;
+                    self.c_col = col;
+                }
+
+        });
+    }
+
+    fn show_bottom(&mut self, ctx: &egui::Context) {
+        egui::TopBottomPanel::bottom("bottom_panel")
+            .resizable(true)
+            .default_height(200.0)
+            .min_height(64.0)
+            .show(ctx, |ui| {
+                 ui.vertical(|ui| {
+                    ui.horizontal(|ui| {
+                        ui.label(format!("Line: {}, Column: {}", self.c_line, self.c_col));
+                    });
+
+                let mut content = String::from("** Generación correcta del analizador léxico **\nArchivo guardado en /home/wallace/Documents/");
+                _ = egui::TextEdit::multiline(&mut content)
                     .code_editor()
                     .min_size(ui.available_size())
                     .desired_width(f32::INFINITY)
-                    .lock_focus(true)
-                    .show(ui);
+                    .show(ui)
+                });
 
-                if response.response.changed() {
-                    if doc.content != prev_content {
-                        doc.is_modified = true;
-                    }
-                }
-            }
-
-        });
+            });
     }
 }
