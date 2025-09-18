@@ -1,4 +1,5 @@
 use eframe::egui;
+use egui_extras::{TableBuilder, Column};
 
 pub fn show(ctx: &egui::Context) {
     egui::SidePanel::right("right_panel")
@@ -49,13 +50,30 @@ fn show_top_panel(ui: &mut egui::Ui) {
 
 fn show_bottom_panel(ui: &mut egui::Ui) {
     egui::TopBottomPanel::bottom("right_bottom_panel")
+    //let mut tokens_table =
         .resizable(true)
-        .default_height(ui.available_height() * 0.5)
         .min_height(64.0)
         .show_inside(ui, |ui| {
-            ui.available_size();
-            ui.horizontal_centered(|ui| {
-                ui.label("Hello world");
+            ui.visuals_mut().striped = true;
+            TableBuilder::new(ui)
+                .columns(Column::remainder(), 4)
+                .header(200.0, |mut header| {
+                    use egui::{RichText};
+                    header.col(|ui| {
+                        ui.heading(RichText::new("Identificador").size(11.0));
+                    });
+                    header.col(|ui| {
+                        ui.heading(RichText::new("Tipo de dato").size(11.0));
+                    });
+                    header.col(|ui| {
+                        ui.heading(RichText::new("Valor").size(11.0));
+                    });
+                    header.col(|ui| {
+                        ui.heading(RichText::new("VarConst").size(11.0));
+                    });
+                });
+            //ui.available_size();
+            //ui.horizontal_centered(|ui| {
+                //ui.label("Hello world");
             });
-        });
 }

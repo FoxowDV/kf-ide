@@ -26,12 +26,13 @@ impl eframe::App for Splash {
         ctx.request_repaint();
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("KF IDE");
+            use egui::{RichText};
+            ui.heading(RichText::new("KF IDE").heading().strong().size(25.0));
 
-            ui.label("Desarolladores: ");
+            ui.label(RichText::new("Desarolladores: ").strong().size(15.0));
 
-            ui.label("Kelpie Athenea Alcalá Padilla");
-            ui.label("Daniel Aldahir Amador Ramírez");
+            ui.label(RichText::new("Kelpie Athenea Alcalá Padilla").strong().size(15.0));
+            ui.label(RichText::new("Daniel Aldahir Amador Ramírez").strong().size(15.0));
 
             ui.add_space(20.0);
 

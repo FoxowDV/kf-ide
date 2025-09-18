@@ -5,6 +5,8 @@ use crate::document::Document;
 
 use crate::code_editor::CodeEditor;
 
+use chrono::Local;
+
 
 #[derive(Default)]
 pub struct App {
@@ -216,7 +218,14 @@ impl App {
                  ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label(format!("Line: {}, Column: {}", self.c_line, self.c_col));
+
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        let now = Local::now();
+                        let time_str = now.format("%H:%M:%S").to_string();
+                        ui.label(time_str);
                     });
+                    });
+
 
                 let mut content = String::from("** Generación correcta del analizador léxico **\nArchivo guardado en /home/wallace/Documents/");
                 _ = egui::TextEdit::multiline(&mut content)

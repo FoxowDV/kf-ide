@@ -7,3 +7,5 @@ edition = "2024"
 eframe = "0.32.2"
 egui = "0.32.2"
 egui_extras = {version = "0.32.2", features = ["default", "all_loaders"]}
+
+chrono = "0.4"
