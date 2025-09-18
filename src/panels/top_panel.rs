@@ -116,7 +116,7 @@ fn show_toolbar(ui: &mut egui::Ui) {
     // Load all images
     let new_file_image = egui::include_image!("../../resources/new-file.svg");
     let open_file_image = egui::include_image!("../../resources/open-file.svg");
-    let save_all_file_image = egui::include_image!("../../resources/content-save-all.svg");
+    let save_all_file_image = egui::include_image!("../../resources/save-all.svg");
     let save_file_image = egui::include_image!("../../resources/save.svg");
     let copy_image = egui::include_image!("../../resources/copy.svg");
     let cut_image = egui::include_image!("../../resources/cut.svg");
