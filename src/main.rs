@@ -1,6 +1,7 @@
 use eframe::egui;
 
 mod document;
+mod shortcuts;
 
 mod app;
 mod panels;

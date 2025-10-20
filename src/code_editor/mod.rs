@@ -77,7 +77,7 @@ impl CodeEditor {
                     egui::FontId::monospace(self.fontsize), 
                     egui::Color32::BLACK),
             );
-            ui.fonts(|f| f.layout_job(layout_job))
+            ui.fonts_mut(|f| f.layout_job(layout_job))
         };
 
         ui.add(
@@ -112,7 +112,7 @@ impl CodeEditor {
                                         egui::FontId::monospace(self.fontsize), 
                                         egui::Color32::BLACK),
                                 );
-                                ui.fonts(|f| f.layout_job(layout_job))
+                                ui.fonts_mut(|f| f.layout_job(layout_job))
                             };
                         let output = egui::TextEdit::multiline(text)
                             .id_source(&self.id)
