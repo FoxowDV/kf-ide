@@ -64,9 +64,7 @@ impl eframe::App for App {
                     Ok(content) => {
                         let mut new_doc = Document::new(
                             path.file_name()
-                                .and_then(|n| n.to_str())
-                                .unwrap_or("Unnamed")
-                                .to_string(),
+                                .and_then(|n| n.to_str()).unwrap().to_string(),
                         );
                         new_doc.content = content;
                         new_doc.file_path = Some(path.clone());
