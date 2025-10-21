@@ -27,7 +27,7 @@ impl App {
 
         // archivos
         let file_dialog = FileDialog::new()
-        .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "rs"));
+        .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "kf"));
         app.file_dialog = file_dialog;
         app.picked_file = None;
         app.add_document("Program1.kf".to_string());
