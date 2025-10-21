@@ -24,6 +24,8 @@ pub struct App {
 impl App {
     pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         let mut app = Self::default();
+
+        // archivos
         let file_dialog = FileDialog::new()
         .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "rs"));
         app.file_dialog = file_dialog;
