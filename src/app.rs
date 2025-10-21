@@ -17,12 +17,13 @@ pub struct App {
     pub next_document_id: usize,
     document_to_save_index: Option<usize>,
     is_modal_open: bool,
+    is_closing: bool,
+    is_saving: bool,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>,
     c_line: usize,
     c_col: usize,
 }
-
 impl App {
     pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         let mut app = Self::default();
@@ -58,7 +59,7 @@ impl eframe::App for App {
 
         if let Some(path) = self.file_dialog.take_picked() {
             // Si existe abre si no guarda
-            if path.exists() {
+            if path.exists() && !self.is_saving {
                 match std::fs::read_to_string(&path) {
                     Ok(content) => {
                         let mut new_doc = Document::new(
@@ -79,7 +80,9 @@ impl eframe::App for App {
                     }
                 }
             } else {
-                if let Some(doc) = self.get_active_document_mut() {
+                self.is_saving = false;
+                let index = self.document_to_save_index.unwrap_or(self.active_tab);
+                if let Some(doc) = self.documents.get_mut(index) {
                     if let Err(e) = std::fs::write(&path, &doc.content) {
                         eprintln!("Error guardando {}", e);
                     } else {
@@ -87,6 +90,10 @@ impl eframe::App for App {
                         doc.file_path = Some(path.clone());
                         if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
                             doc.name = name.to_string();
+                        }
+                        self.document_to_save_index = None;
+                        if self.is_closing {
+                            self.check_for_close(ctx);
                         }
                     }
                 }
@@ -104,11 +111,16 @@ impl eframe::App for App {
 
                     ui.horizontal(|ui| {
                         if ui.button("Save").clicked() {
-                            self.documents[i].is_modified = false;
-                            if self.save_file(self.active_tab) {
+                            if self.documents[i].file_path.is_some() {
+                                if self.save_file(i) {
+                                    self.documents[i].is_modified = false;
+                                }
                                 self.is_modal_open = false;
                                 self.document_to_save_index = None;
-                                self.check_for_close(&ctx);
+                            } else {
+                                self.is_modal_open = false;
+                                self.is_saving = true;
+                                self.file_dialog.save_file();
                             }
                         }
                         if ui.button("Don't save").clicked() {
@@ -120,11 +132,16 @@ impl eframe::App for App {
                         if ui.button("Cancel").clicked() {
                             self.is_modal_open = false;
                             self.document_to_save_index = None;
+                            self.is_closing = false;
                         }
                     });
                 });
 
             }
+        }
+
+        if self.is_closing && !self.is_modal_open {
+            if !self.check_for_close(ctx){}
         }
 
         right_panel::show(ctx);
@@ -180,6 +197,7 @@ impl App {
                     return true;
                 }
             } else {
+                self.is_saving = true;
                 self.file_dialog.save_file();
                 return false;
             }

@@ -56,6 +56,7 @@ impl App {
             ui.separator();
 
             if ui.add(egui::Button::new("Exit").shortcut_text("ALT+X")).clicked() {
+                self.is_closing = true;
                 if self.check_for_close(ui.ctx()) {
                     ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
                 }
