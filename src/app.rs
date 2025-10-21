@@ -52,10 +52,34 @@ impl eframe::App for App {
         self.file_dialog.update(ctx);
 
         if let Some(path) = self.file_dialog.take_picked() {
-            // si existe estamos abriendo
             if path.exists() {
-                self.picked_file = Some(path.to_path_buf());
-            } else {
+            match std::fs::read_to_string(&path) {
+                    Ok(content) => {
+                        if let Some(doc) = self.get_active_document_mut() {
+                            doc.content = content;
+                            doc.is_modified = false;
+                            doc.name = path.file_name()
+                                .and_then(|n| n.to_str())
+                                .unwrap_or("Unnamed")
+                                .to_string();
+                        } else {
+                            let mut new_doc = Document::new(
+                                path.file_name()
+                                    .and_then(|n| n.to_str())
+                                    .unwrap_or("Unnamed")
+                                    .to_string(),
+                            );
+                            new_doc.content = content;
+                            self.documents.push(new_doc);
+                            self.active_tab = self.documents.len() - 1;
+                        }    
+                        self.picked_file = Some(path.to_path_buf());
+                    }
+                    Err(e) => {
+                        eprintln!("Error al abrir el archivo: {}", e);
+                    }
+            }
+                } else {
                 if let Some(doc) = self.get_active_document_mut() {
                     if let Err(e) = std::fs::write(&path, &doc.content) {
                         eprintln!("Error guardando {}", e);
