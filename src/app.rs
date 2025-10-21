@@ -28,15 +28,8 @@ impl App {
         let mut app = Self::default();
 
         // archivos
-        let file_dialog = FileDialog::new()
-            .add_file_filter(
-                "KF",
-                Arc::new(|p| p.extension().unwrap_or_default() == "kf"),
-            )
-            .default_file_filter("KF")
-            .initial_directory(PathBuf::from("/home/wallace/Documents/"))
-            .default_file_name("Program.kf");
-        app.file_dialog = file_dialog;
+        app.file_dialog = Self::create_file_dialog("Program.kf");
+        //app.file_dialog = file_dialog;
         app.picked_file = None;
         app.is_modal_open = false;
         app.add_document("Program1.kf".to_string());
@@ -200,6 +193,9 @@ impl App {
                 }
             } else {
                 self.is_saving = true;
+
+                self.file_dialog = Self::create_file_dialog(&doc.name);
+
                 self.file_dialog.save_file();
                 return false;
             }
@@ -217,5 +213,16 @@ impl App {
         }
         ctx.send_viewport_cmd(egui::ViewportCommand::Close);
         true
+    }
+
+    fn create_file_dialog(filename: &str)-> FileDialog {
+        FileDialog::new()
+            .add_file_filter(
+                "KF",
+                Arc::new(|p| p.extension().unwrap_or_default() == "kf"),
+            )
+            .default_file_filter("KF")
+            .initial_directory(PathBuf::from("/home/wallace/Documents/"))
+            .default_file_name(filename)
     }
 }
