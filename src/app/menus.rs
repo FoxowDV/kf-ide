@@ -21,7 +21,7 @@ impl App {
                 ui.close();
             }
             if ui.add(egui::Button::new("Open").shortcut_text("CTRL+O")).clicked() {
-                println!("Abrir");
+                self.open_file();
                 ui.close();
             }
 

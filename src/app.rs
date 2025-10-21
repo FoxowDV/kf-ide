@@ -3,12 +3,11 @@ use egui_file_dialog::FileDialog;
 
 use std::{path::PathBuf, sync::Arc};
 
-use crate::panels::{right_panel};
 use crate::document::Document;
+use crate::panels::right_panel;
 
-mod ui;
 mod menus;
-
+mod ui;
 
 #[derive(Default)]
 pub struct App {
@@ -30,9 +29,12 @@ impl App {
 
         // archivos
         let file_dialog = FileDialog::new()
-        .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "kf"))
-        .initial_directory(PathBuf::from("/home/wallace/Documents/"))
-        .default_file_name("Program.kf");
+            .add_file_filter(
+                "KF",
+                Arc::new(|p| p.extension().unwrap_or_default() == "kf"),
+            )
+            .initial_directory(PathBuf::from("/home/wallace/Documents/"))
+            .default_file_name("Program.kf");
         app.file_dialog = file_dialog;
         app.picked_file = None;
         app.is_modal_open = false;
@@ -42,9 +44,8 @@ impl App {
 
     pub fn add_document(&mut self, name: String) {
         self.documents.push(Document::new(name));
-        self.active_tab = self.documents.len() -1;
+        self.active_tab = self.documents.len() - 1;
     }
-
 
     pub fn get_active_document_mut(&mut self) -> Option<&mut Document> {
         self.documents.get_mut(self.active_tab)
@@ -64,14 +65,15 @@ impl eframe::App for App {
                     Ok(content) => {
                         let mut new_doc = Document::new(
                             path.file_name()
-                                .and_then(|n| n.to_str()).unwrap().to_string(),
+                                .and_then(|n| n.to_str())
+                                .unwrap()
+                                .to_string(),
                         );
                         new_doc.content = content;
                         new_doc.file_path = Some(path.clone());
                         new_doc.is_modified = false;
                         self.documents.push(new_doc);
                         self.active_tab = self.documents.len() - 1;
-                        self.picked_file = Some(path.to_path_buf());
                     }
                     Err(e) => {
                         eprintln!("Error al abrir el archivo: {}", e);
@@ -134,12 +136,11 @@ impl eframe::App for App {
                         }
                     });
                 });
-
             }
         }
 
         if self.is_closing && !self.is_modal_open {
-            if !self.check_for_close(ctx){}
+            if !self.check_for_close(ctx) {}
         }
 
         right_panel::show(ctx);
@@ -148,15 +149,13 @@ impl eframe::App for App {
 
         self.show_tabs(ctx);
         self.show_central_panel(ctx);
-
     }
 }
-
 
 impl App {
     fn new_file(&mut self) {
         self.next_document_id += 1;
-        let name = format!("Program{}.kf", self.next_document_id+1);
+        let name = format!("Program{}.kf", self.next_document_id + 1);
         self.add_document(name);
     }
 
@@ -173,10 +172,9 @@ impl App {
         } else if index < self.documents.len() {
             self.documents.remove(index);
             self.next_document_id += 1;
-            let name = format!("Program{}.kf", self.next_document_id+1);
+            let name = format!("Program{}.kf", self.next_document_id + 1);
             self.documents.push(Document::new(name));
             self.active_tab = self.documents.len() - 1;
-
         }
     }
 
@@ -184,7 +182,7 @@ impl App {
         self.file_dialog.pick_file();
     }
 
-    fn save_file(&mut self, index: usize)-> bool {
+    fn save_file(&mut self, index: usize) -> bool {
         if let Some(doc) = self.documents.get_mut(index) {
             if let Some(path) = &doc.file_path {
                 if let Err(e) = std::fs::write(path, &doc.content) {
@@ -208,11 +206,10 @@ impl App {
             if doc.is_modified {
                 self.document_to_save_index = Some(i);
                 self.is_modal_open = true;
-                return false
+                return false;
             }
         }
         ctx.send_viewport_cmd(egui::ViewportCommand::Close);
         true
     }
 }
-
