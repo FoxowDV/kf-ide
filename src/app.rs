@@ -55,24 +55,15 @@ impl eframe::App for App {
             if path.exists() {
             match std::fs::read_to_string(&path) {
                     Ok(content) => {
-                        if let Some(doc) = self.get_active_document_mut() {
-                            doc.content = content;
-                            doc.is_modified = false;
-                            doc.name = path.file_name()
+                        let mut new_doc = Document::new(
+                            path.file_name()
                                 .and_then(|n| n.to_str())
                                 .unwrap_or("Unnamed")
-                                .to_string();
-                        } else {
-                            let mut new_doc = Document::new(
-                                path.file_name()
-                                    .and_then(|n| n.to_str())
-                                    .unwrap_or("Unnamed")
-                                    .to_string(),
-                            );
-                            new_doc.content = content;
-                            self.documents.push(new_doc);
-                            self.active_tab = self.documents.len() - 1;
-                        }    
+                                .to_string(),
+                        );
+                        new_doc.content = content;
+                        self.documents.push(new_doc);
+                        self.active_tab = self.documents.len() - 1;
                         self.picked_file = Some(path.to_path_buf());
                     }
                     Err(e) => {
