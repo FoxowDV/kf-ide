@@ -33,6 +33,7 @@ impl App {
                 "KF",
                 Arc::new(|p| p.extension().unwrap_or_default() == "kf"),
             )
+            .default_file_filter("KF")
             .initial_directory(PathBuf::from("/home/wallace/Documents/"))
             .default_file_name("Program.kf");
         app.file_dialog = file_dialog;
