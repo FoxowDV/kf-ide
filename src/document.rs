@@ -1,10 +1,11 @@
+use std::{path::PathBuf};
 
 #[derive(Clone)]
 pub struct Document{
     pub name: String,
     pub content: String,
     pub is_modified: bool,
-
+    pub file_path: Option<PathBuf>,
 }
 
 impl Document {
@@ -13,6 +14,7 @@ impl Document {
             name,
             content: String::new(),
             is_modified: false,
+            file_path: None,
         }
     }
 
@@ -21,6 +23,7 @@ impl Document {
             name,
             content,
             is_modified: false,
+            file_path: None,
         }
     }
 }

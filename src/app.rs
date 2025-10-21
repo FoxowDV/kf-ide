@@ -15,6 +15,8 @@ pub struct App {
     pub documents: Vec<Document>,
     pub active_tab: usize,
     pub next_document_id: usize,
+    document_to_save_index: Option<usize>,
+    is_modal_open: bool,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>,
     c_line: usize,
@@ -27,9 +29,12 @@ impl App {
 
         // archivos
         let file_dialog = FileDialog::new()
-        .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "kf"));
+        .add_file_filter("KF", Arc::new(|p| p.extension().unwrap_or_default() == "kf"))
+        .initial_directory(PathBuf::from("/home/wallace/Documents/"))
+        .default_file_name("Program.kf");
         app.file_dialog = file_dialog;
         app.picked_file = None;
+        app.is_modal_open = false;
         app.add_document("Program1.kf".to_string());
         app
     }
@@ -52,8 +57,9 @@ impl eframe::App for App {
         self.file_dialog.update(ctx);
 
         if let Some(path) = self.file_dialog.take_picked() {
+            // Si existe abre si no guarda
             if path.exists() {
-            match std::fs::read_to_string(&path) {
+                match std::fs::read_to_string(&path) {
                     Ok(content) => {
                         let mut new_doc = Document::new(
                             path.file_name()
@@ -62,6 +68,8 @@ impl eframe::App for App {
                                 .to_string(),
                         );
                         new_doc.content = content;
+                        new_doc.file_path = Some(path.clone());
+                        new_doc.is_modified = false;
                         self.documents.push(new_doc);
                         self.active_tab = self.documents.len() - 1;
                         self.picked_file = Some(path.to_path_buf());
@@ -69,20 +77,53 @@ impl eframe::App for App {
                     Err(e) => {
                         eprintln!("Error al abrir el archivo: {}", e);
                     }
-            }
-                } else {
+                }
+            } else {
                 if let Some(doc) = self.get_active_document_mut() {
                     if let Err(e) = std::fs::write(&path, &doc.content) {
                         eprintln!("Error guardando {}", e);
                     } else {
-                        dbg!(&path);
-
                         doc.is_modified = false;
+                        doc.file_path = Some(path.clone());
                         if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
                             doc.name = name.to_string();
                         }
                     }
                 }
+            }
+        }
+
+        if self.is_modal_open {
+            if let Some(i) = self.document_to_save_index {
+                egui::Window::new("save_modal").show(ctx, |ui| {
+                    ui.heading("Unsaved Changes");
+
+                    ui.add_space(10.0);
+                    ui.label(format!("Save changes to '{}'?", &self.documents[i].name));
+                    ui.add_space(20.0);
+
+                    ui.horizontal(|ui| {
+                        if ui.button("Save").clicked() {
+                            self.documents[i].is_modified = false;
+                            if self.save_file(self.active_tab) {
+                                self.is_modal_open = false;
+                                self.document_to_save_index = None;
+                                self.check_for_close(&ctx);
+                            }
+                        }
+                        if ui.button("Don't save").clicked() {
+                            self.documents[i].is_modified = false;
+                            self.is_modal_open = false;
+                            self.document_to_save_index = None;
+                            self.check_for_close(&ctx);
+                        }
+                        if ui.button("Cancel").clicked() {
+                            self.is_modal_open = false;
+                            self.document_to_save_index = None;
+                        }
+                    });
+                });
+
             }
         }
 
@@ -92,9 +133,6 @@ impl eframe::App for App {
 
         self.show_tabs(ctx);
         self.show_central_panel(ctx);
-
-
-
 
     }
 }
@@ -108,8 +146,7 @@ impl App {
     }
 
     fn close_file(&mut self, index: usize) {
-        // If not the only document close the tab and change the active tab depending of the current
-        // active tab
+        // Permite cambiar automaticamente de tab cuando se cierra un doc
         if self.documents.len() > 1 && index < self.documents.len() {
             self.documents.remove(index);
             if self.active_tab >= self.documents.len() {
@@ -117,7 +154,7 @@ impl App {
             } else if self.active_tab > index {
                 self.active_tab -= 1;
             }
-        // If the tab is the only one, open a new one always
+        // No permite no tenr archivos, siempre muestra 1
         } else if index < self.documents.len() {
             self.documents.remove(index);
             self.next_document_id += 1;
@@ -132,9 +169,34 @@ impl App {
         self.file_dialog.pick_file();
     }
 
-    fn save_file(&mut self) {
-        self.file_dialog.save_file();
+    fn save_file(&mut self, index: usize)-> bool {
+        if let Some(doc) = self.documents.get_mut(index) {
+            if let Some(path) = &doc.file_path {
+                if let Err(e) = std::fs::write(path, &doc.content) {
+                    eprintln!("Error guardando {}", e);
+                    return false;
+                } else {
+                    doc.is_modified = false;
+                    return true;
+                }
+            } else {
+                self.file_dialog.save_file();
+                return false;
+            }
+        }
+        return false;
     }
 
+    fn check_for_close(&mut self, ctx: &egui::Context) -> bool {
+        for (i, doc) in self.documents.iter().enumerate() {
+            if doc.is_modified {
+                self.document_to_save_index = Some(i);
+                self.is_modal_open = true;
+                return false
+            }
+        }
+        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+        true
+    }
 }
 

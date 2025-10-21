@@ -28,7 +28,7 @@ impl App {
             ui.separator();
 
             if ui.add(egui::Button::new("Save").shortcut_text("CTRL+S")).clicked() {
-                println!("Guardar");
+                self.save_file(self.active_tab);
                 ui.close();
             }
             if ui.add(egui::Button::new("Save all").shortcut_text("CTRL+ALT+S")).clicked() {
@@ -56,7 +56,9 @@ impl App {
             ui.separator();
 
             if ui.add(egui::Button::new("Exit").shortcut_text("ALT+X")).clicked() {
-                ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                if self.check_for_close(ui.ctx()) {
+                    ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                }
             }
         });
     }
@@ -128,7 +130,7 @@ impl App {
             }
             if ui.add(egui::Button::image(egui::Image::new(save_file_image).fit_to_exact_size(image_size))
                 .min_size(image_size)).clicked() {
-                self.save_file();
+                self.save_file(self.active_tab);
             }
             if ui.add(egui::Button::image(egui::Image::new(save_all_file_image).fit_to_exact_size(image_size))
                 .min_size(image_size)).clicked() {
