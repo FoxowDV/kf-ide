@@ -162,6 +162,10 @@ impl App {
 
     fn close_file(&mut self, index: usize) {
         // Permite cambiar automaticamente de tab cuando se cierra un doc
+        if self.documents.get_mut(index).unwrap().is_modified {
+            self.document_to_save_index = Some(index); 
+            self.is_modal_open = true;
+        }else{
         if self.documents.len() > 1 && index < self.documents.len() {
             self.documents.remove(index);
             if self.active_tab >= self.documents.len() {
@@ -177,6 +181,7 @@ impl App {
             self.documents.push(Document::new(name));
             self.active_tab = self.documents.len() - 1;
 
+        }
         }
     }
 
