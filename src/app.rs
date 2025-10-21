@@ -139,42 +139,7 @@ impl App {
 
     fn open_file(&mut self) {
         self.file_dialog.pick_file();
- 
-        if let Some(path) = self.file_dialog.take_picked() {
-            if path.exists() {
-                match std::fs::read_to_string(&path) {
-                    Ok(content) => {
-                        // Si ya hay un documento activo, reemplazamos su contenido
-                        if let Some(doc) = self.get_active_document_mut() {
-                            doc.content = content;
-                            doc.is_modified = false;
-                            doc.name = path.file_name()
-                                .and_then(|n| n.to_str())
-                                .unwrap_or("Unnamed")
-                                .to_string();
-                        } else {
-                            // Si no hay documento activo, creamos uno nuevo
-                            let mut new_doc = Document::new(
-                                path.file_name()
-                                    .and_then(|n| n.to_str())
-                                    .unwrap_or("Unnamed")
-                                    .to_string(),
-                            );
-                            new_doc.content = content;
-                            self.documents.push(new_doc);
-                            self.active_tab = self.documents.len() - 1;
-                        }
-
-                        self.picked_file = Some(path.to_path_buf());
-                    }
-                    Err(e) => {
-                        eprintln!("Error al abrir el archivo: {}", e);
-                    }
-                }
-            }
-        }
     }
-
 
     fn save_file(&mut self) {
         self.file_dialog.save_file();
