@@ -122,39 +122,39 @@ impl App {
 
         ui.horizontal(|ui| {
             if ui.add(egui::Button::image(egui::Image::new(new_file_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 self.new_file();
             }
             if ui.add(egui::Button::image(egui::Image::new(open_file_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 self.open_file();
             }
             if ui.add(egui::Button::image(egui::Image::new(save_file_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 self.save_file(self.active_tab);
             }
             if ui.add(egui::Button::image(egui::Image::new(save_all_file_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("save all file");    
             }
             if ui.add(egui::Button::image(egui::Image::new(copy_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("copy");    
             }
             if ui.add(egui::Button::image(egui::Image::new(cut_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("cut");    
             }
             if ui.add(egui::Button::image(egui::Image::new(paste_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("paste");    
             }
             if ui.add(egui::Button::image(egui::Image::new(compile_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("compile");    
             }
             if ui.add(egui::Button::image(egui::Image::new(compile_and_run_image).fit_to_exact_size(image_size))
-                .min_size(image_size)).clicked() {
+                .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("compile and run");    
             }
         });

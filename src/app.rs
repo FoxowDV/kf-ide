@@ -1,13 +1,16 @@
 use eframe::egui;
 use egui_file_dialog::FileDialog;
 
-use std::{path::PathBuf, sync::Arc};
+use std::{
+    path::PathBuf, 
+    sync::Arc
+};
 
 use crate::document::Document;
-use crate::panels::right_panel;
 
 mod menus;
 mod ui;
+mod tables;
 
 #[derive(Default)]
 pub struct App {
@@ -48,8 +51,16 @@ impl App {
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        self.show_top_panel(ctx);
 
+        let mut new_style = (*ctx.style()).clone();
+        // fondo
+        new_style.visuals.panel_fill = egui::Color32::from_rgb(245, 245, 245);
+        // fuente
+        new_style.visuals.override_text_color = Some(egui::Color32::from_rgb(0, 0, 0));
+        ctx.set_style(new_style);
+
+
+        self.show_top_panel(ctx);
         self.file_dialog.update(ctx);
 
         if let Some(path) = self.file_dialog.take_picked() {
@@ -137,7 +148,8 @@ impl eframe::App for App {
             if !self.check_for_close(ctx) {}
         }
 
-        right_panel::show(ctx);
+
+        self.show_tables(ctx);
 
         self.show_bottom(ctx);
 

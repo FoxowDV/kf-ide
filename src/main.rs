@@ -4,7 +4,6 @@ mod document;
 mod shortcuts;
 
 mod app;
-mod panels;
 mod code_editor;
 
 

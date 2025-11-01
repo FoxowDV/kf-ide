@@ -8,14 +8,18 @@ use crate::shortcuts::{NEW_FILE};
 impl App {
 
     pub fn show_top_panel(&mut self, ctx: &egui::Context) {
-        let mut new_style = (*ctx.style()).clone();
-        new_style.visuals.panel_fill = egui::Color32::from_rgb(230, 230, 230);
-        ctx.set_style(new_style);
-
-        egui::TopBottomPanel::top("top_menu_bar").show(ctx, |ui| {
-            self.show_menu_bar(ui);
-            self.show_tool_bar(ctx, ui);
-            self.shortcuts(ctx, ui);
+        egui::TopBottomPanel::top("top_menu_bar")
+            .frame(
+                egui::Frame::default()
+                    .outer_margin(0.0)
+                    .inner_margin(1.0)
+                    .fill(egui::Color32::from_rgb(245, 245, 245))
+                    .stroke(egui::Stroke::NONE)
+            )
+            .show(ctx, |ui| {
+                self.show_menu_bar(ui);
+                self.show_tool_bar(ctx, ui);
+                self.shortcuts(ctx, ui);
         });
     }
 
@@ -27,8 +31,14 @@ impl App {
             .frame(
                 egui::Frame::default()
                 .outer_margin(0.0)
-                .inner_margin(0.0)
-                .fill(egui::Color32::from_rgb(230, 230, 230))
+                .inner_margin(egui::Margin {
+                    left: 8,
+                    right: 8,
+                    top: 2,
+                    bottom: 0,
+                })
+                .fill(egui::Color32::from_rgb(245, 245, 245))
+                .stroke(egui::Stroke::NONE)
             )
             .show(ctx, |ui| {
                 ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
@@ -54,14 +64,14 @@ impl App {
                         |ui| {
                             let tab_rect = ui.available_rect_before_wrap();
                             let tab_color = if is_active {
-                                egui::Color32::WHITE
+                                egui::Color32::from_rgb(200, 200, 250)
                             } else {
-                                egui::Color32::from_rgb(230, 230, 230)
+                                egui::Color32::from_rgb(235, 235, 235)
                             };
                         
                             ui.painter().rect_filled(
                                 tab_rect,
-                                egui::CornerRadius::same(4),
+                                egui::CornerRadius::same(0),
                                 tab_color
                             );
 
@@ -113,7 +123,8 @@ impl App {
                 .outer_margin(0.0)
                 .inner_margin(0.0)
                 .fill(egui::Color32::WHITE)
-                )
+                .stroke(egui::Stroke::NONE)
+            )
             .show(ctx, |ui| {
                 if let Some(doc) = self.get_active_document_mut() {
                     let prev_content = doc.content.clone();
@@ -123,8 +134,6 @@ impl App {
                         .with_ui_fontsize(ui)
                         .with_rows(1)
                         .show(ui, &mut doc.content);
-
-
 
                     if response.response.changed() {
                         if doc.content != prev_content {

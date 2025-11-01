@@ -1,5 +1,8 @@
 use eframe::egui;
-use std::time::{Duration, Instant};
+use std::time::{
+    Duration, 
+    Instant
+};
 
 #[derive(Default)]
 pub struct Splash {
