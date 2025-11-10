@@ -5,6 +5,7 @@ mod shortcuts;
 
 mod app;
 mod code_editor;
+mod syntax;
 
 
 use app::App;
