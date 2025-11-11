@@ -95,8 +95,11 @@ impl App {
     }
 
     pub fn show_tools_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("Tools", |_ui| {
-            // Tools menu content
+        ui.menu_button("Tools", |ui| {
+            if ui.button("Open Config").clicked() {
+                self.config_window.open = true;
+                ui.close();
+            }
         });
     }
 
