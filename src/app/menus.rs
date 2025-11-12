@@ -14,9 +14,9 @@ impl App {
     }
 
     pub fn show_file_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("File", |ui| {
+        ui.menu_button(self.translator.t("file"), |ui| {
             
-            if ui.add(egui::Button::new("New File").shortcut_text("CTRL+N")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("new file")).shortcut_text("CTRL+N")).clicked() {
                 self.new_file();
                 ui.close();
             }
@@ -97,7 +97,7 @@ impl App {
     pub fn show_tools_menu(&mut self, ui: &mut egui::Ui) {
         ui.menu_button("Tools", |ui| {
             if ui.button("Open Config").clicked() {
-                self.config_window.open = true;
+                self.config_window.open_window();
                 ui.close();
             }
         });

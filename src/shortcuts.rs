@@ -8,56 +8,56 @@ pub const NEW_FILE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::N
 );
-pub const OPEN_FILE: KeyboardShortcut = KeyboardShortcut::new(
+pub const _OPEN_FILE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::O
 );
-pub const SAVE_FILE: KeyboardShortcut = KeyboardShortcut::new(
+pub const _SAVE_FILE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::S
 );
 
-pub const SAVE_ALL: KeyboardShortcut = KeyboardShortcut::new(
+pub const _SAVE_ALL: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::A
 );
 
-pub const SAVE_AS: KeyboardShortcut = KeyboardShortcut::new(
+pub const _SAVE_AS: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::ALT,
     Key::S
 );
 
-pub const CLOSE_FILE: KeyboardShortcut = KeyboardShortcut::new(
+pub const _CLOSE_FILE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::W
 );
 
-pub const EXIT: KeyboardShortcut = KeyboardShortcut::new(
+pub const _EXIT: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::ALT,
     Key::X
 );
 
-pub const COPY: KeyboardShortcut = KeyboardShortcut::new(
+pub const _COPY: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::C
 );
 
-pub const CUT: KeyboardShortcut = KeyboardShortcut::new(
+pub const _CUT: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::X
 );
 
-pub const PASTE: KeyboardShortcut = KeyboardShortcut::new(
+pub const _PASTE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::V
 );
 
-pub const COMPILE: KeyboardShortcut = KeyboardShortcut::new(
+pub const _COMPILE: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::COMMAND,
     Key::B
 );
 
-pub const COMPILE_AND_RUN: KeyboardShortcut = KeyboardShortcut::new(
+pub const _COMPILE_AND_RUN: KeyboardShortcut = KeyboardShortcut::new(
     Modifiers::ALT,
     Key::F6
 );
