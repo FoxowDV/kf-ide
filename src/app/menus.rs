@@ -20,42 +20,42 @@ impl App {
                 self.new_file();
                 ui.close();
             }
-            if ui.add(egui::Button::new("Open").shortcut_text("CTRL+O")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("open")).shortcut_text("CTRL+O")).clicked() {
                 self.open_file();
                 ui.close();
             }
 
             ui.separator();
 
-            if ui.add(egui::Button::new("Save").shortcut_text("CTRL+S")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("save")).shortcut_text("CTRL+S")).clicked() {
                 self.save_file(self.active_tab);
                 ui.close();
             }
-            if ui.add(egui::Button::new("Save all").shortcut_text("CTRL+ALT+S")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("save all")).shortcut_text("CTRL+ALT+S")).clicked() {
                 println!("Guardar todo");
                 ui.close();
             }
-            if ui.add(egui::Button::new("Save as").shortcut_text("CTRL+SHIFT+S")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("save as")).shortcut_text("CTRL+SHIFT+S")).clicked() {
                 println!("Guardar como");
                 ui.close();
             }
 
             ui.separator();
 
-            if ui.add(egui::Button::new("Close file").shortcut_text("CTRL+SHIFT+W")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("close file")).shortcut_text("CTRL+SHIFT+W")).clicked() {
                 self.close_file(self.active_tab);
                 ui.close();
             }
 
 
-            if ui.button("Close all").clicked() {
+            if ui.button(self.translator.t("close all")).clicked() {
                 println!("Cerrar todo");
                 ui.close();
             }
 
             ui.separator();
 
-            if ui.add(egui::Button::new("Exit").shortcut_text("ALT+X")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("exit")).shortcut_text("ALT+X")).clicked() {
                 self.is_closing = true;
                 if self.check_for_close(ui.ctx()) {
                     ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
@@ -65,16 +65,16 @@ impl App {
     }
 
     pub fn show_edit_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("Edit", |ui| {
-            if ui.add(egui::Button::new("Copy").shortcut_text("CTRL+C")).clicked() {
+        ui.menu_button(self.translator.t("edit"), |ui| {
+            if ui.add(egui::Button::new(self.translator.t("copy")).shortcut_text("CTRL+C")).clicked() {
                 println!("Copiar");
                 ui.close();
             }
-            if ui.add(egui::Button::new("Cut").shortcut_text("CTRL+X")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("cut")).shortcut_text("CTRL+X")).clicked() {
                 println!("Cortar");
                 ui.close();
             }
-            if ui.add(egui::Button::new("Paste").shortcut_text("CTRL+V")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("paste")).shortcut_text("CTRL+V")).clicked() {
                 println!("Pegar");
                 ui.close();
             }
@@ -82,12 +82,12 @@ impl App {
     }
 
     pub fn show_compile_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("Compile", |ui| {
-            if ui.add(egui::Button::new("Compile").shortcut_text("CTRL+SHIFT+B")).clicked() {
+        ui.menu_button(self.translator.t("compile"), |ui| {
+            if ui.add(egui::Button::new(self.translator.t("compile")).shortcut_text("CTRL+SHIFT+B")).clicked() {
                 println!("Compilar");
                 ui.close();
             }
-            if ui.add(egui::Button::new("Compile and run").shortcut_text("CTRL+F6")).clicked() {
+            if ui.add(egui::Button::new(self.translator.t("compile and run")).shortcut_text("CTRL+F6")).clicked() {
                 println!("Compilar y correr");
                 ui.close();
             }
@@ -95,8 +95,8 @@ impl App {
     }
 
     pub fn show_tools_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("Tools", |ui| {
-            if ui.button("Open Config").clicked() {
+        ui.menu_button(self.translator.t("tools"), |ui| {
+            if ui.button(self.translator.t("open config")).clicked() {
                 self.config_window.open_window();
                 ui.close();
             }
@@ -104,7 +104,7 @@ impl App {
     }
 
     pub fn show_about_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("About", |_ui| {
+        ui.menu_button(self.translator.t("about"), |_ui| {
             // About menu content
         });
     }

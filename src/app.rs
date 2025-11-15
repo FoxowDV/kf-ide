@@ -117,14 +117,14 @@ impl eframe::App for App {
         if self.is_modal_open {
             if let Some(i) = self.document_to_save_index {
                 egui::Window::new("save_modal").show(ctx, |ui| {
-                    ui.heading("Unsaved Changes");
+                    ui.heading(self.translator.t("unsaved changes"));
 
                     ui.add_space(10.0);
-                    ui.label(format!("Save changes to '{}'?", &self.documents[i].name));
+                    ui.label(format!("{} '{}'?", self.translator.t("save changes to"), &self.documents[i].name));
                     ui.add_space(20.0);
 
                     ui.horizontal(|ui| {
-                        if ui.button("Save").clicked() {
+                        if ui.button(self.translator.t("save")).clicked() {
                             if self.documents[i].file_path.is_some() {
                                 if self.save_file(i) {
                                     self.documents[i].is_modified = false;
@@ -137,13 +137,13 @@ impl eframe::App for App {
                                 self.file_dialog.save_file();
                             }
                         }
-                        if ui.button("Don't save").clicked() {
+                        if ui.button(self.translator.t("dont save")).clicked() {
                             self.documents[i].is_modified = false;
                             self.is_modal_open = false;
                             self.document_to_save_index = None;
                             self.check_for_close(&ctx);
                         }
-                        if ui.button("Cancel").clicked() {
+                        if ui.button(self.translator.t("cancel")).clicked() {
                             self.is_modal_open = false;
                             self.document_to_save_index = None;
                             self.is_closing = false;
