@@ -85,12 +85,14 @@ impl App {
                     .max_height(70.0)
                     .show(ui, |ui| {
                         ui.set_width(100.0);
-                        ui.selectable_value(&mut self.config.style, "plain".to_string(), "Plain");
-                        ui.selectable_value(&mut self.config.style, "bold".to_string(), "Bold");
-                        ui.selectable_value(&mut self.config.style, "italic".to_string(), "Italic");
+                        ui.selectable_value(&mut self.config.style, "Regular".to_string(), "Regular");
+                        ui.selectable_value(&mut self.config.style, "Bold".to_string(), "Bold");
+                        ui.selectable_value(&mut self.config.style, "Italic".to_string(), "Italic");
                     });
 
+                self.update_font_p(ui.ctx());
                 ui.add_space(10.0);
+
 
                 ui.label(format!("{}:", self.translator.t("example")));
                 ui.add_space(5.0);
@@ -117,23 +119,24 @@ impl App {
                         );
                         
                         // Mapear la fuente seleccionada a FontFamily
-                        let font_family = match self.config.font.as_str() {
-                            "Arial" => egui::FontFamily::Name("Arial".into()),
-                            "Bahnschrift" => egui::FontFamily::Name("Bahnschrift".into()),
-                            "Bodoni" => egui::FontFamily::Name("Bodoni".into()),
-                            _ => egui::FontFamily::Proportional,
-                        };
+                       // let font_family = match self.config.font.as_str() {
+                       //     "Arial" => egui::FontFamily::Name("Arial".into()),
+                       //     "Bahnschrift" => egui::FontFamily::Name("Bahnschrift".into()),
+                       //     "Bodoni" => egui::FontFamily::Name("Bodoni".into()),
+                       //     _ => egui::FontFamily::Proportional,
+                       // };
                         
                         let mut text = egui::RichText::new(example_text)
-                            .size(self.config.size as f32)
-                            .family(font_family);
+                            .size(self.config.size as f32);
+                       //     .family(font_family);
                         
                         // Aplicar el estilo seleccionado usando RichText
-                        text = match self.config.style.as_str() {
-                            "bold" => text.strong(),
-                            "italic" => text.italics(),
-                            _ => text,
-                        };
+                       // text = match self.config.style.as_str() {
+                       //     "Regular" => text.strong(),
+                       //     "Bold" => text.strong(),
+                       //     "Italic" => text.italics(),
+                       //     _ => text,
+                       // };
                         
                         ui.label(text);
                     });

@@ -80,11 +80,6 @@ impl App {
         );
 
         fonts.font_data.insert(
-            "Arial-BoldItalic".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/arialbi.ttf")).into(),
-        );
-
-        fonts.font_data.insert(
             "Bahnschrift-Regular".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/bahnschrift.ttf")).into(),
         );
@@ -94,34 +89,26 @@ impl App {
             egui::FontData::from_static(include_bytes!("../fonts/Bodoni Bd BT Bold.ttf")).into(),
         );
 
-            fonts.font_data.insert(
-            "Consola".to_owned(),
+        fonts.font_data.insert(
+            "Consola-Regular".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
         );
 
-        fonts.families.insert(
-            egui::FontFamily::Name("Arial".into()),
-            vec!["Arial-Regular".to_owned()],
-        );
-
-        fonts.families.insert(
-            egui::FontFamily::Name("Bahnschrift".into()),
-            vec!["Bahnschrift-Regular".to_owned()],
-        );
-
-        fonts.families.insert(
-            egui::FontFamily::Name("Bodoni".into()),
-            vec!["Bodoni-Bold".to_owned()],
-        );
-
-        fonts.families.get_mut(&egui::FontFamily::Proportional).unwrap()
-            .insert(0, "Arial-Regular".to_owned());
-        
-        fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap()
-            .insert(0, "Arial-Regular".to_owned());
-
         ctx.set_fonts(fonts);
     }
+
+    fn update_font_p(&mut self, ctx: &egui::Context) {
+        let mut fonts = ctx.fonts(|f| f.definitions().clone());
+        
+        let font_key = format!("{}-{}", self.config.font, self.config.style);
+        
+        fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap().clear();
+        fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap().push(font_key);
+        
+        ctx.set_fonts(fonts);
+    }
+
+
 
     pub fn add_document(&mut self, name: String) {
         self.documents.push(Document::new(name));
