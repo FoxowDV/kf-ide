@@ -90,13 +90,7 @@ impl App {
         );
 
         fonts.font_data.insert(
-<<<<<<< HEAD
             "Consola-Regular".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
-        );
-
-=======
-            "Consola".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
         );
 
@@ -110,28 +104,6 @@ impl App {
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLAI.TTF")).into(),
         );
 
-        fonts.families.insert(
-            egui::FontFamily::Name("Arial".into()),
-            vec!["Arial-Regular".to_owned()],
-        );
-
-        fonts.families.insert(
-            egui::FontFamily::Name("Bahnschrift".into()),
-            vec!["Bahnschrift-Regular".to_owned()],
-        );
-
-        fonts.families.insert(
-            egui::FontFamily::Name("Bodoni".into()),
-            vec!["Bodoni-Bold".to_owned()],
-        );
-
-        fonts.families.get_mut(&egui::FontFamily::Proportional).unwrap()
-            .insert(0, "Arial-Regular".to_owned());
-        
-        fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap()
-            .insert(0, "Arial-Regular".to_owned());
-
->>>>>>> 56a718540ebec30220f5b765090125bba5ffb59c
         ctx.set_fonts(fonts);
     }
 
