@@ -94,9 +94,19 @@ impl App {
             egui::FontData::from_static(include_bytes!("../fonts/Bodoni Bd BT Bold.ttf")).into(),
         );
 
-            fonts.font_data.insert(
+        fonts.font_data.insert(
             "Consola".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
+        );
+
+         fonts.font_data.insert(
+            "Consola-Bold".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAB.TTF")).into(),
+        );
+
+         fonts.font_data.insert(
+            "Consola-Italic".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAI.TTF")).into(),
         );
 
         fonts.families.insert(
