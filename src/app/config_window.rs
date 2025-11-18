@@ -67,6 +67,7 @@ impl App {
                             "Arial",
                             "Bahnschrift",
                             "Bodoni",
+                            "Consola",
                         ];
                         for font in fonts {
                             ui.selectable_value(&mut self.config.font, font.to_string(), font);
