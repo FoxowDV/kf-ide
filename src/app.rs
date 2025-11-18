@@ -59,11 +59,11 @@ impl App {
         
         let syntax = Syntax::kf();
         let mut app = Self::default();
-        app.file_dialog = Self::create_file_dialog("Program.kf");
+        app.config = cfg;
+        app.file_dialog = Self::create_file_dialog("Program.kf", &app.config.work_path);
         app.picked_file = None;
         app.is_modal_open = false;
         app.add_document("Program1.kf".to_string());
-        app.config = cfg;
         app.translator = Translator::new(app.config.language);
         app.completer = Completer::new_with_syntax(&syntax).with_user_words();
         app
@@ -89,47 +89,47 @@ impl App {
 
         fonts.font_data.insert(
             "Consola-Regular".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Consola-Bold".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAB.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAB.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Consola-Italic".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAI.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLAI.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Ubuntu-Regular".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.regular.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.regular.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Ubuntu-Bold".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.bold.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.bold.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Ubuntu-Italic".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.italic.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.italic.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Hack-Regular".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/Hack-Regular.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Regular.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Hack-Bold".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/Hack-Bold.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Bold.ttf")).into(),
         );
 
         fonts.font_data.insert(
             "Hack-Italic".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/Hack-Italic.TTF")).into(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Italic.ttf")).into(),
         );
 
         ctx.set_fonts(fonts);
@@ -325,7 +325,7 @@ impl App {
             } else {
                 self.is_saving = true;
 
-                self.file_dialog = Self::create_file_dialog(&doc.name);
+                self.file_dialog = Self::create_file_dialog(&doc.name, &self.config.work_path);
 
                 self.file_dialog.save_file();
                 return false;
@@ -346,14 +346,14 @@ impl App {
         true
     }
 
-    fn create_file_dialog(filename: &str)-> FileDialog {
+    fn create_file_dialog(filename: &str, work_path: &str)-> FileDialog {
         FileDialog::new()
             .add_file_filter(
                 "KF",
                 Arc::new(|p| p.extension().unwrap_or_default() == "kf"),
             )
             .default_file_filter("KF")
-            .initial_directory(PathBuf::from("/home/wallace/Documents/"))
+            .initial_directory(PathBuf::from(work_path))
             .default_file_name(filename)
     }
 }
