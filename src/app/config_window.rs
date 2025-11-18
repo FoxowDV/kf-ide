@@ -9,25 +9,23 @@ pub enum ConfigTab {
     Compilation,
 }
 
-
 impl ::std::default::Default for ConfigTab {
     fn default() -> Self { 
         ConfigTab::Font
     }
 }
 
-
 impl App {
-    pub fn show_config_window( &mut self, ctx: &egui::Context ) {
-        egui::Window::new("Configuración")
+    pub fn show_config_window(&mut self, ctx: &egui::Context) {
+        egui::Window::new(self.translator.t("configuration"))
             .collapsible(false)
             .resizable(true)
             .default_width(700.0)
             .default_height(500.0)
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
-                    ui.selectable_value(&mut self.config_tab, ConfigTab::Font, "Fuente");
-                    ui.selectable_value(&mut self.config_tab, ConfigTab::Compilation, "Compilación");
+                    ui.selectable_value(&mut self.config_tab, ConfigTab::Font, self.translator.t("font"));
+                    ui.selectable_value(&mut self.config_tab, ConfigTab::Compilation, self.translator.t("compilation"));
                 });
 
                 ui.separator();
@@ -42,10 +40,10 @@ impl App {
 
                 ui.horizontal(|ui| {
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        if ui.button("Cancelar").clicked() {
+                        if ui.button(self.translator.t("cancel")).clicked() {
                             self.is_config_open = false;
                         }
-                        if ui.button("Aceptar").clicked() {
+                        if ui.button(self.translator.t("accept")).clicked() {
                             self.translator = Translator::new(self.config.language);
                             let _ = self.config.save(self.config.clone());
                             self.is_config_open = false;
@@ -58,7 +56,7 @@ impl App {
     fn show_font_tab(&mut self, ui: &mut egui::Ui) {
         ui.horizontal_top(|ui| {
             ui.vertical(|ui| {
-                ui.label("Fuente:");
+                ui.label(format!("{}:", self.translator.t("font")));
                 ui.add_space(5.0);
                 egui::ScrollArea::vertical()
                     .id_salt("font_list")
@@ -66,9 +64,9 @@ impl App {
                     .show(ui, |ui| {
                         ui.set_width(180.0);
                         let fonts = vec![
-                            "Proportional",
-                            "Monospace",
-                            "Consolas",
+                            "Arial",
+                            "Bahnschrift",
+                            "Bodoni",
                         ];
                         for font in fonts {
                             ui.selectable_value(&mut self.config.font, font.to_string(), font);
@@ -79,7 +77,7 @@ impl App {
             ui.add_space(15.0);
 
             ui.vertical(|ui| {
-                ui.label("Estilo:");
+                ui.label(format!("{}:", self.translator.t("style")));
                 ui.add_space(5.0);
                 egui::ScrollArea::vertical()
                     .id_salt("style_list")
@@ -93,7 +91,7 @@ impl App {
 
                 ui.add_space(10.0);
 
-                ui.label("Ejemplo:");
+                ui.label(format!("{}:", self.translator.t("example")));
                 ui.add_space(5.0);
                 egui::Frame::new()
                     .fill(egui::Color32::WHITE)
@@ -103,12 +101,25 @@ impl App {
                         ui.set_width(280.0);
                         ui.set_height(90.0);
                         
-                        // PONER CON EL TRADCUTOR NOMAS PONER 
-                        // Example y en el config poner todo este texto
-                        let example_text = "program ejemplo1;\nvar\n  edad:byte\nbegin\n  writeln(\"Bienvenido al Lenguaje\n  MicroPascual...\");\nend.";
+                        // Texto del ejemplo traducido
+                        let example_text = format!(
+                            "{} {};\n{}\n  {}:{}\n{}\n  {}(\"{}\");\n{}.",
+                            self.translator.t("program"),
+                            self.translator.t("example1"),
+                            self.translator.t("var"),
+                            self.translator.t("age"),
+                            self.translator.t("byte"),
+                            self.translator.t("begin"),
+                            self.translator.t("writeln"),
+                            self.translator.t("welcome"),
+                            self.translator.t("end")
+                        );
                         
+                        // Mapear la fuente seleccionada a FontFamily
                         let font_family = match self.config.font.as_str() {
-                            "Monospace" => egui::FontFamily::Monospace,
+                            "Arial" => egui::FontFamily::Name("Arial".into()),
+                            "Bahnschrift" => egui::FontFamily::Name("Bahnschrift".into()),
+                            "Bodoni" => egui::FontFamily::Name("Bodoni".into()),
                             _ => egui::FontFamily::Proportional,
                         };
                         
@@ -116,13 +127,12 @@ impl App {
                             .size(self.config.size as f32)
                             .family(font_family);
                         
+                        // Aplicar el estilo seleccionado usando RichText
                         text = match self.config.style.as_str() {
                             "bold" => text.strong(),
                             "italic" => text.italics(),
                             _ => text,
                         };
-                        
-                       //text = text.color(self.selected_color);
                         
                         ui.label(text);
                     });
@@ -131,26 +141,32 @@ impl App {
             ui.add_space(15.0);
 
             ui.vertical(|ui| {
-                ui.label("Tamaño:");
+                ui.label(format!("{}:", self.translator.t("size")));
                 ui.add_space(5.0);
                 egui::ScrollArea::vertical()
                     .id_salt("size_list")
                     .max_height(100.0)
                     .show(ui, |ui| {
                         ui.set_width(50.0);
-                        for size in 10..=16 {
+                        for size in [8, 10, 12, 14, 16, 18, 20, 24] {
                             ui.selectable_value(&mut self.config.size, size, size.to_string());
                         }
                     });
 
                 ui.add_space(15.0);
 
-                ui.label("Idioma:");
+                ui.label(format!("{}:", self.translator.t("language")));
                 ui.add_space(5.0);
+                
+                let old_language = self.config.language;
+                
                 for language in UiLanguage::all() {
                     ui.radio_value(&mut self.config.language, language, language.display_name());
                 }
-                self.translator = Translator::new(self.config.language);
+                
+                if old_language != self.config.language {
+                    self.translator = Translator::new(self.config.language);
+                }
             });
         });
 
@@ -158,7 +174,7 @@ impl App {
         ui.separator();
         ui.add_space(10.0);
 
-        ui.label("Color:");
+        ui.label(format!("{}:", self.translator.t("color")));
         ui.add_space(5.0);
         
         ui.horizontal_top(|ui| {
@@ -167,18 +183,17 @@ impl App {
                     .id_salt("color_categories")
                     .max_height(200.0)
                     .show(ui, |ui| {
-                        //ui.set_width(180.0);
                         let categories = vec![
-                            ("Background", &mut self.config.background), 
-                            ("Cursor", &mut self.config.cursor), 
-                            ("Selection", &mut self.config.selection), 
-                            ("General", &mut self.config.general), 
-                            ("Palabras reservadas", &mut self.config.keywords), 
-                            ("Comentarios", &mut self.config.comments), 
-                            ("Identificadores", &mut self.config.identifiers), 
-                            ("Números", &mut self.config.numerics), 
-                            ("Cadenas", &mut self.config.strings), 
-                            ("Signos de puntuación", &mut self.config.punctuation),
+                            (self.translator.t("background"), &mut self.config.background), 
+                            (self.translator.t("cursor"), &mut self.config.cursor), 
+                            (self.translator.t("selection"), &mut self.config.selection), 
+                            (self.translator.t("general"), &mut self.config.general), 
+                            (self.translator.t("reserved words"), &mut self.config.keywords), 
+                            (self.translator.t("coments"), &mut self.config.comments), 
+                            (self.translator.t("identifiers"), &mut self.config.identifiers), 
+                            (self.translator.t("numbers"), &mut self.config.numerics), 
+                            (self.translator.t("chains"), &mut self.config.strings), 
+                            (self.translator.t("punctuation marks"), &mut self.config.punctuation),
                             ("Funciones", &mut self.config.functions),
                             ("Tipos", &mut self.config.types),
                             ("Especiales", &mut self.config.special),
@@ -192,8 +207,6 @@ impl App {
                         }
                     });
             });
-
-
         });
     }
     

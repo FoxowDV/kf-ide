@@ -7,7 +7,6 @@ mod config;
 mod ui_language;
 mod translator;
 
-
 use eframe::egui;
 use app::App;
 use splash::Splash;
@@ -15,14 +14,17 @@ use config::Config;
 
 fn main() -> Result<(), eframe::Error> {
     let cfg: Config = match confy::load("kf-ide") {
-        Ok(cfg) => cfg,
-        Err(_) => { 
+        Ok(cfg) => {
+            println!("Configuración cargada");
+            cfg
+        },
+        Err(e) => { 
+            eprintln!("Error: {}. Creando nueva configuración.", e);
             let temp_conf = Config::default();
             let _ = confy::store("kf-ide", &temp_conf);
             temp_conf
         },
     };
-    //println!("{:#?}", cfg);
 
    let options_splash = eframe::NativeOptions {
        viewport: egui::ViewportBuilder::default()
@@ -41,10 +43,10 @@ fn main() -> Result<(), eframe::Error> {
         })
     );
 
-
    let native_options = eframe::NativeOptions {
         ..Default::default()
     };
+    
     eframe::run_native(
         "KF IDE", 
         native_options, 
@@ -55,4 +57,3 @@ fn main() -> Result<(), eframe::Error> {
         })
     )
 }
-

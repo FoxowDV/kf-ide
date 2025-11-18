@@ -45,7 +45,10 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(_cc: &eframe::CreationContext<'_>, cfg: Config) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>, cfg: Config) -> Self {
+
+        Self::setup_custom_fonts(&cc.egui_ctx);
+        
         let syntax = Syntax::kf();
         let mut app = Self::default();
         app.file_dialog = Self::create_file_dialog("Program.kf");
@@ -56,6 +59,63 @@ impl App {
         app.translator = Translator::new(app.config.language);
         app.completer = Completer::new_with_syntax(&syntax).with_user_words();
         app
+    }
+
+    fn setup_custom_fonts(ctx: &egui::Context) {
+        let mut fonts = egui::FontDefinitions::default();
+
+        fonts.font_data.insert(
+            "Arial-Regular".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/arial.ttf")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Arial-Bold".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/arialbd.ttf")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Arial-Italic".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/ariali.ttf")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Arial-BoldItalic".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/arialbi.ttf")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Bahnschrift-Regular".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/bahnschrift.ttf")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Bodoni-Bold".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/Bodoni Bd BT Bold.ttf")).into(),
+        );
+
+        fonts.families.insert(
+            egui::FontFamily::Name("Arial".into()),
+            vec!["Arial-Regular".to_owned()],
+        );
+
+        fonts.families.insert(
+            egui::FontFamily::Name("Bahnschrift".into()),
+            vec!["Bahnschrift-Regular".to_owned()],
+        );
+
+        fonts.families.insert(
+            egui::FontFamily::Name("Bodoni".into()),
+            vec!["Bodoni-Bold".to_owned()],
+        );
+
+        fonts.families.get_mut(&egui::FontFamily::Proportional).unwrap()
+            .insert(0, "Arial-Regular".to_owned());
+        
+        fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap()
+            .insert(0, "Arial-Regular".to_owned());
+
+        ctx.set_fonts(fonts);
     }
 
     pub fn add_document(&mut self, name: String) {

@@ -205,8 +205,7 @@ impl App {
                     }
                     
                 }
-
-                // Current line high
+                
                 if self.c_line > 0 {
                     let line_height = self.config.size as f32 * 1.15;
                     let y_offset = ((self.c_line - 1) as f32) * line_height;
