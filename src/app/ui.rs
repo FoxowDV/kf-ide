@@ -155,7 +155,7 @@ impl App {
                 // Erorr
                 self.error_line = Some(5);
                 if let Some(error_line) = self.error_line {
-                    let line_height = self.config.size as f32 * 1.2;
+                    let line_height = self.config.size as f32 * 1.15;
                     let y_offset = (error_line as f32) * line_height;
                     
                     let rect = egui::Rect::from_min_size(
