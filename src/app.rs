@@ -80,16 +80,6 @@ impl App {
         );
 
         fonts.font_data.insert(
-            "Bahnschrift-Regular".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/bahnschrift.ttf")).into(),
-        );
-
-        fonts.font_data.insert(
-            "Bodoni-Bold".to_owned(),
-            egui::FontData::from_static(include_bytes!("../fonts/Bodoni Bd BT Bold.ttf")).into(),
-        );
-
-        fonts.font_data.insert(
             "Consola-Regular".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
         );

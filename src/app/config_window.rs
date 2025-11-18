@@ -65,8 +65,6 @@ impl App {
                         ui.set_width(180.0);
                         let fonts = vec![
                             "Arial",
-                            "Bahnschrift",
-                            "Bodoni",
                             "Consola",
                         ];
                         for font in fonts {
