@@ -1,0 +1,244 @@
+use eframe::egui;
+use crate::app::App;
+use crate::ui_language::UiLanguage;
+use crate::translator::Translator;
+
+#[derive(PartialEq)]
+pub enum ConfigTab {
+    Font,
+    Compilation,
+}
+
+
+impl ::std::default::Default for ConfigTab {
+    fn default() -> Self { 
+        ConfigTab::Font
+    }
+}
+
+
+impl App {
+    pub fn show_config_window( &mut self, ctx: &egui::Context ) {
+        egui::Window::new("Configuración")
+            .collapsible(false)
+            .resizable(true)
+            .default_width(700.0)
+            .default_height(500.0)
+            .show(ctx, |ui| {
+                ui.horizontal(|ui| {
+                    ui.selectable_value(&mut self.config_tab, ConfigTab::Font, "Fuente");
+                    ui.selectable_value(&mut self.config_tab, ConfigTab::Compilation, "Compilación");
+                });
+
+                ui.separator();
+
+                match self.config_tab {
+                    ConfigTab::Font => self.show_font_tab(ui),
+                    ConfigTab::Compilation => self.show_compilation_tab(ui),
+                }
+
+                ui.add_space(10.0);
+                ui.separator();
+
+                ui.horizontal(|ui| {
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if ui.button("Cancelar").clicked() {
+                            self.is_config_open = false;
+                        }
+                        if ui.button("Aceptar").clicked() {
+                            self.translator = Translator::new(self.config.language);
+                            let _ = self.config.save(self.config.clone());
+                            self.is_config_open = false;
+                        }
+                    });
+                });
+        });
+    }
+
+    fn show_font_tab(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal_top(|ui| {
+            ui.vertical(|ui| {
+                ui.label("Fuente:");
+                ui.add_space(5.0);
+                egui::ScrollArea::vertical()
+                    .id_salt("font_list")
+                    .max_height(180.0)
+                    .show(ui, |ui| {
+                        ui.set_width(180.0);
+                        let fonts = vec![
+                            "Proportional",
+                            "Monospace",
+                            "Consolas",
+                        ];
+                        for font in fonts {
+                            ui.selectable_value(&mut self.config.font, font.to_string(), font);
+                        }
+                    });
+            });
+
+            ui.add_space(15.0);
+
+            ui.vertical(|ui| {
+                ui.label("Estilo:");
+                ui.add_space(5.0);
+                egui::ScrollArea::vertical()
+                    .id_salt("style_list")
+                    .max_height(70.0)
+                    .show(ui, |ui| {
+                        ui.set_width(100.0);
+                        ui.selectable_value(&mut self.config.style, "plain".to_string(), "Plain");
+                        ui.selectable_value(&mut self.config.style, "bold".to_string(), "Bold");
+                        ui.selectable_value(&mut self.config.style, "italic".to_string(), "Italic");
+                    });
+
+                ui.add_space(10.0);
+
+                ui.label("Ejemplo:");
+                ui.add_space(5.0);
+                egui::Frame::new()
+                    .fill(egui::Color32::WHITE)
+                    .stroke(egui::Stroke::new(1.0, egui::Color32::GRAY))
+                    .inner_margin(8.0)
+                    .show(ui, |ui| {
+                        ui.set_width(280.0);
+                        ui.set_height(90.0);
+                        
+                        // PONER CON EL TRADCUTOR NOMAS PONER 
+                        // Example y en el config poner todo este texto
+                        let example_text = "program ejemplo1;\nvar\n  edad:byte\nbegin\n  writeln(\"Bienvenido al Lenguaje\n  MicroPascual...\");\nend.";
+                        
+                        let font_family = match self.config.font.as_str() {
+                            "Monospace" => egui::FontFamily::Monospace,
+                            _ => egui::FontFamily::Proportional,
+                        };
+                        
+                        let mut text = egui::RichText::new(example_text)
+                            .size(self.config.size as f32)
+                            .family(font_family);
+                        
+                        text = match self.config.style.as_str() {
+                            "bold" => text.strong(),
+                            "italic" => text.italics(),
+                            _ => text,
+                        };
+                        
+                       //text = text.color(self.selected_color);
+                        
+                        ui.label(text);
+                    });
+            });
+
+            ui.add_space(15.0);
+
+            ui.vertical(|ui| {
+                ui.label("Tamaño:");
+                ui.add_space(5.0);
+                egui::ScrollArea::vertical()
+                    .id_salt("size_list")
+                    .max_height(100.0)
+                    .show(ui, |ui| {
+                        ui.set_width(50.0);
+                        for size in 10..=16 {
+                            ui.selectable_value(&mut self.config.size, size, size.to_string());
+                        }
+                    });
+
+                ui.add_space(15.0);
+
+                ui.label("Idioma:");
+                ui.add_space(5.0);
+                for language in UiLanguage::all() {
+                    ui.radio_value(&mut self.config.language, language, language.display_name());
+                }
+                self.translator = Translator::new(self.config.language);
+            });
+        });
+
+        ui.add_space(15.0);
+        ui.separator();
+        ui.add_space(10.0);
+
+        ui.label("Color:");
+        ui.add_space(5.0);
+        
+        ui.horizontal_top(|ui| {
+            ui.vertical(|ui| {
+                egui::ScrollArea::vertical()
+                    .id_salt("color_categories")
+                    .max_height(200.0)
+                    .show(ui, |ui| {
+                        //ui.set_width(180.0);
+                        let categories = vec![
+                            ("Background", &mut self.config.background), 
+                            ("Cursor", &mut self.config.cursor), 
+                            ("Selection", &mut self.config.selection), 
+                            ("General", &mut self.config.general), 
+                            ("Palabras reservadas", &mut self.config.keywords), 
+                            ("Comentarios", &mut self.config.comments), 
+                            ("Identificadores", &mut self.config.identifiers), 
+                            ("Números", &mut self.config.numerics), 
+                            ("Cadenas", &mut self.config.strings), 
+                            ("Signos de puntuación", &mut self.config.punctuation),
+                            ("Funciones", &mut self.config.functions),
+                            ("Tipos", &mut self.config.types),
+                            ("Especiales", &mut self.config.special),
+                        ];
+
+                        for (label, color) in categories {
+                            ui.horizontal(|ui| {
+                                ui.label(label);
+                                ui.color_edit_button_srgba(color);
+                            });
+                        }
+                    });
+            });
+
+
+        });
+    }
+    
+    fn show_compilation_tab(&mut self, ui: &mut egui::Ui) {
+        ui.add_space(20.0);
+
+        ui.horizontal(|ui| {
+            ui.label("Ruta de Trabajo:");
+        });
+        ui.horizontal(|ui| {
+            ui.add(
+                egui::TextEdit::singleline(&mut self.config.work_path)
+                    .desired_width(500.0)
+            );
+            if ui.button("Buscar").clicked() {
+            }
+        });
+
+        ui.add_space(20.0);
+
+        ui.horizontal(|ui| {
+            ui.label("Ruta del Ensamblador:");
+        });
+
+        ui.horizontal(|ui| {
+            ui.add(
+                egui::TextEdit::singleline(&mut self.config.assembler_path)
+                    .desired_width(500.0)
+            );
+            if ui.button("Buscar").clicked() {
+            }
+        });
+
+        ui.add_space(20.0);
+
+        ui.horizontal(|ui| {
+            ui.label("Ruta Emulador DOS:");
+        });
+        ui.horizontal(|ui| {
+            ui.add(
+                egui::TextEdit::singleline(&mut self.config.dos_emulator_path)
+                    .desired_width(500.0)
+            );
+            if ui.button("Buscar").clicked() {
+            }
+        });
+    }
+}

@@ -67,15 +67,22 @@ impl App {
     pub fn show_edit_menu(&mut self, ui: &mut egui::Ui) {
         ui.menu_button(self.translator.t("edit"), |ui| {
             if ui.add(egui::Button::new(self.translator.t("copy")).shortcut_text("CTRL+C")).clicked() {
-                println!("Copiar");
+                ui.ctx().copy_text(self.selected_text.clone());
                 ui.close();
             }
             if ui.add(egui::Button::new(self.translator.t("cut")).shortcut_text("CTRL+X")).clicked() {
-                println!("Cortar");
+                ui.ctx().copy_text(self.selected_text.clone());
+
+                if let Some(pos) = self.documents[*&self.active_tab].content.find(&self.selected_text) {
+                    self.documents[*&self.active_tab].content.replace_range(pos..pos + self.selected_text.len(), "");
+                    self.documents[*&self.active_tab].is_modified = true;
+                }
+
                 ui.close();
             }
             if ui.add(egui::Button::new(self.translator.t("paste")).shortcut_text("CTRL+V")).clicked() {
-                println!("Pegar");
+                
+                ui.ctx().send_viewport_cmd(egui::ViewportCommand::RequestPaste);
                 ui.close();
             }
         });
@@ -97,7 +104,7 @@ impl App {
     pub fn show_tools_menu(&mut self, ui: &mut egui::Ui) {
         ui.menu_button(self.translator.t("tools"), |ui| {
             if ui.button(self.translator.t("open config")).clicked() {
-                self.config_window.open_window();
+                self.is_config_open = true;
                 ui.close();
             }
         });
@@ -140,17 +147,31 @@ impl App {
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
                 println!("save all file");    
             }
+            // CPOY
             if ui.add(egui::Button::image(egui::Image::new(copy_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
-                println!("copy");    
+                    ui.ctx().copy_text(self.selected_text.clone());
+                    ui.close();
             }
+            // CUT
             if ui.add(egui::Button::image(egui::Image::new(cut_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
-                println!("cut");    
+
+
+                    ui.ctx().copy_text(self.selected_text.clone());
+
+                    if let Some(pos) = self.documents[*&self.active_tab].content.find(&self.selected_text) {
+                        self.documents[*&self.active_tab].content.replace_range(pos..pos + self.selected_text.len(), "");
+                        self.documents[*&self.active_tab].is_modified = true;
+                    }
+                    ui.close();
+
             }
+            // APSTE
             if ui.add(egui::Button::image(egui::Image::new(paste_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
-                println!("paste");    
+                ui.ctx().send_viewport_cmd(egui::ViewportCommand::RequestPaste);
+                ui.close();
             }
             if ui.add(egui::Button::image(egui::Image::new(compile_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {

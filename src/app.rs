@@ -1,9 +1,12 @@
+use egui_code_editor::{Completer, Syntax};
+use crate::syntax::kf::SyntaxExt;
+
 mod menus;
 mod ui;
 mod tables;
-mod configWindow;
+mod config_window;
 
-
+use config_window::ConfigTab;
 
 use eframe::egui;
 use egui_file_dialog::FileDialog;
@@ -14,7 +17,6 @@ use std::{
 };
 
 use crate::document::Document;
-use configWindow::ConfigWindow;
 
 use crate::Config;
 use crate::translator::Translator;
@@ -24,6 +26,7 @@ use crate::translator::Translator;
 pub struct App {
     pub documents: Vec<Document>,
     pub active_tab: usize,
+    pub config_tab: ConfigTab,
     pub next_document_id: usize,
     document_to_save_index: Option<usize>,
     is_modal_open: bool,
@@ -33,21 +36,25 @@ pub struct App {
     picked_file: Option<PathBuf>,
     c_line: usize,
     c_col: usize,
-    config_window: ConfigWindow,
+    is_config_open: bool,
     config: Config,
     translator: Translator,
+    completer: Completer,
+    selected_text: String,
+    error_line: Option<usize>,
 }
 
 impl App {
     pub fn new(_cc: &eframe::CreationContext<'_>, cfg: Config) -> Self {
+        let syntax = Syntax::kf();
         let mut app = Self::default();
-
         app.file_dialog = Self::create_file_dialog("Program.kf");
         app.picked_file = None;
         app.is_modal_open = false;
         app.add_document("Program1.kf".to_string());
         app.config = cfg;
-        app.translator = Translator::new(app.config.get_lang());
+        app.translator = Translator::new(app.config.language);
+        app.completer = Completer::new_with_syntax(&syntax).with_user_words();
         app
     }
 
@@ -56,9 +63,6 @@ impl App {
         self.active_tab = self.documents.len() - 1;
     }
 
-    pub fn get_active_document_mut(&mut self) -> Option<&mut Document> {
-        self.documents.get_mut(self.active_tab)
-    }
 }
 
 impl eframe::App for App {
@@ -165,7 +169,10 @@ impl eframe::App for App {
         self.show_tabs(ctx);
         self.show_central_panel(ctx);
 
-        self.config_window.show(ctx);
+        if self.is_config_open {
+            self.show_config_window(ctx)
+        }
+
     }
 }
 

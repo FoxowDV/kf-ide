@@ -2,22 +2,28 @@ use crate::ui_language::UiLanguage;
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Config {
-    font: String,
-    style: String,
-    size: u32,
-    language: UiLanguage,
-    general: egui::Color32,
-    keywords: egui::Color32,
-    comments: egui::Color32,
-    identifiers: egui::Color32,
-    integers: egui::Color32,
-    floats: egui::Color32,
-    punctuation: egui::Color32,
-    work_path: String,
-    assember_path: String,
-    dos_emulator_path: String,
+    pub font: String,
+    pub style: String,
+    pub size: u32,
+    pub language: UiLanguage,
+    pub background: egui::Color32,
+    pub cursor: egui::Color32,
+    pub selection: egui::Color32,
+    pub general: egui::Color32,
+    pub keywords: egui::Color32,
+    pub comments: egui::Color32,
+    pub identifiers: egui::Color32,
+    pub numerics: egui::Color32,
+    pub punctuation: egui::Color32,
+    pub strings: egui::Color32,
+    pub functions: egui::Color32,
+    pub types: egui::Color32,
+    pub special: egui::Color32,
+    pub work_path: String,
+    pub assembler_path: String,
+    pub dos_emulator_path: String,
 }
 
 impl ::std::default::Default for Config {
@@ -27,15 +33,24 @@ impl ::std::default::Default for Config {
             style: "plain".into(),
             size: 12,
             language: UiLanguage::default(),
-            general: egui::Color32::from_rgb(220, 220, 220),
-            keywords: egui::Color32::from_rgb(86, 156, 214),
+
+            background: egui::Color32::WHITE,
+            cursor: egui::Color32::BLACK,
+            selection: egui::Color32::from_rgb(200, 200, 255),
+
+            general: egui::Color32::BLACK,
+            keywords: egui::Color32::from_rgb(0, 102, 204),
             comments: egui::Color32::from_rgb(106, 153, 85),
-            identifiers: egui::Color32::from_rgb(156, 220, 254),
-            integers: egui::Color32::from_rgb(181, 206, 168),
-            floats: egui::Color32::from_rgb(181, 206, 168),
-            punctuation: egui::Color32::from_rgb(212, 212, 212),
+            identifiers: egui::Color32::from_rgb(0, 0, 0),
+            numerics: egui::Color32::from_rgb(180, 0, 0),
+            punctuation: egui::Color32::from_rgb(50, 50, 50),
+            strings: egui::Color32::from_rgb(180, 0, 180),
+            functions: egui::Color32::from_rgb(128, 0, 128),
+            types: egui::Color32::from_rgb(0, 128, 128),
+            special: egui::Color32::from_rgb(255, 0, 0),
+
             work_path: "./".into(),
-            assember_path: "./TASM".into(),
+            assembler_path: "./TASM".into(),
             dos_emulator_path: "./DOSBox".into(),
         } 
     }
@@ -46,10 +61,6 @@ impl Config {
     pub fn save(&mut self, new: Config) {
         confy::store("kf-ide", &new).ok();
         *self = new;
-    }
-
-    pub fn get_lang(&self) -> UiLanguage {
-        self.language
     }
 }
 

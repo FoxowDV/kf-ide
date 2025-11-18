@@ -1,8 +1,12 @@
-use super::Syntax;
+use egui_code_editor::Syntax;
 use std::collections::BTreeSet;
 
-impl Syntax {
-    pub fn kf() -> Syntax {
+pub trait SyntaxExt {
+    fn kf() -> Syntax;
+}
+
+impl SyntaxExt for Syntax {
+    fn kf() -> Syntax {
         Syntax {
             language: "kf",
             case_sensitive: true,
@@ -10,13 +14,48 @@ impl Syntax {
             comment_multiline: [r#"/*"#, r#"*/"#],
             hyperlinks: BTreeSet::from(["http"]),
             keywords: BTreeSet::from([
-                "and"
+                "utl",
+                "off",
+                "onoff",
+                "on",
+                "wii",
+                "mote",
+                "kf",
+                "next",
+                "ash",
+                "brokie",
+                "send",
+                "tnirp",
+                "tupni",
+                "join",
             ]),
             types: BTreeSet::from([
-                "bool"
+                "chip",
+                "yesorno",
+                "ntr",
+                "michi",
+                "ont",
+                "uont",
+                "dec",
             ]),
             special: BTreeSet::from([
-                "false"
+                "yes",
+                "no",
+                "lesst",
+                "great",
+                "and",
+                "or",
+                "nah",
+                "noteq",
+                "eq",
+                "is",
+                "plus",
+                "plusplus",
+                "mult",
+                "minus",
+                "minusminus",
+                "by",
+                "mod",
             ])
 
         }

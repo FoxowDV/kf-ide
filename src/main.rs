@@ -1,7 +1,6 @@
 mod document;
 mod shortcuts;
 mod app;
-mod code_editor;
 mod syntax;
 mod splash;
 mod config;
