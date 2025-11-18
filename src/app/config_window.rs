@@ -2,6 +2,7 @@ use eframe::egui;
 use crate::app::App;
 use crate::ui_language::UiLanguage;
 use crate::translator::Translator;
+use crate::app::PathType;
 
 #[derive(PartialEq)]
 pub enum ConfigTab {
@@ -105,7 +106,7 @@ impl App {
                         ui.set_height(90.0);
                         
                         // Texto del ejemplo traducido
-                        let example_text = format!(
+                        let mut example_text = format!(
                             "{} {};\n{}\n  {}:{}\n{}\n  {}(\"{}\");\n{}.",
                             self.translator.t("program"),
                             self.translator.t("example1"),
@@ -118,27 +119,10 @@ impl App {
                             self.translator.t("end")
                         );
                         
-                        // Mapear la fuente seleccionada a FontFamily
-                       // let font_family = match self.config.font.as_str() {
-                       //     "Arial" => egui::FontFamily::Name("Arial".into()),
-                       //     "Bahnschrift" => egui::FontFamily::Name("Bahnschrift".into()),
-                       //     "Bodoni" => egui::FontFamily::Name("Bodoni".into()),
-                       //     _ => egui::FontFamily::Proportional,
-                       // };
-                        
-                        let mut text = egui::RichText::new(example_text)
-                            .size(self.config.size as f32);
-                       //     .family(font_family);
-                        
-                        // Aplicar el estilo seleccionado usando RichText
-                       // text = match self.config.style.as_str() {
-                       //     "Regular" => text.strong(),
-                       //     "Bold" => text.strong(),
-                       //     "Italic" => text.italics(),
-                       //     _ => text,
-                       // };
-                        
-                        ui.label(text);
+                        _ = egui::TextEdit::multiline(&mut example_text)
+                            .code_editor()
+                            .font(egui::FontId::monospace(self.config.size as f32))
+                            .show(ui);
                     });
             });
 
@@ -226,6 +210,8 @@ impl App {
                     .desired_width(500.0)
             );
             if ui.button("Buscar").clicked() {
+                self.current_path_type = Some(PathType::WorkPath);
+                self.file_dialog.pick_directory();
             }
         });
 
@@ -241,6 +227,8 @@ impl App {
                     .desired_width(500.0)
             );
             if ui.button("Buscar").clicked() {
+                self.current_path_type = Some(PathType::AssemblerPath);
+                self.file_dialog.pick_directory();
             }
         });
 
@@ -255,6 +243,8 @@ impl App {
                     .desired_width(500.0)
             );
             if ui.button("Buscar").clicked() {
+                self.current_path_type = Some(PathType::DosEmulatorPath);
+                self.file_dialog.pick_directory();
             }
         });
     }
