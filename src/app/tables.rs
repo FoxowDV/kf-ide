@@ -49,16 +49,16 @@ impl App {
                     ui.heading(RichText::new("Lexema").size(14.0));
                 });
                 header.col(|ui| {
-                    ui.heading(RichText::new("[Line, Column]").size(14.0));
+                    ui.heading(RichText::new(self.translator.t("[Line, Column]")).size(14.0));
                 });
             })
         .body(|mut body| {
             body.row(30.0, |mut row| {
                 row.col(|ui| {
-                    ui.label("hello");
+                    ui.label(self.translator.t("hello"));
                 });
                 row.col(|ui| {
-                    ui.label("world");
+                    ui.label(self.translator.t("world"));
                 });
                 row.col(|ui| {
                     ui.label("(aaa,aa)");
@@ -88,20 +88,20 @@ impl App {
                             egui::CornerRadius::same(0),
                             egui::Color32::WHITE
                         );
-                        ui.label(RichText::new(" Symbols table").strong().size(15.0));
+                        ui.label(RichText::new(self.translator.t(" Symbols table")).strong().size(15.0));
                     });
                 TableBuilder::new(ui)
                     .id_salt("aa")
                     .columns(Column::remainder(), 4)
                     .header(30.0, |mut header| {
                         header.col(|ui| {
-                            ui.heading(RichText::new("Identifier").size(14.0));
+                            ui.heading(RichText::new(self.translator.t("Identifier")).size(14.0));
                         });
                         header.col(|ui| {
-                            ui.heading(RichText::new("Data type").size(14.0));
+                            ui.heading(RichText::new(self.translator.t("Data type")).size(14.0));
                         });
                         header.col(|ui| {
-                            ui.heading(RichText::new("Value").size(14.0));
+                            ui.heading(RichText::new(self.translator.t("Value")).size(14.0));
                         });
                         header.col(|ui| {
                             ui.heading(RichText::new("VarConst").size(14.0));
@@ -110,10 +110,10 @@ impl App {
                     .body(|mut body| {
                         body.row(30.0, |mut row| {
                             row.col(|ui| {
-                                ui.label("hello");
+                                ui.label(self.translator.t("hello"));
                             });
                             row.col(|ui| {
-                                ui.label("world");
+                                ui.label(self.translator.t("world"));
                             });
                             row.col(|ui| {
                                 ui.label("(aaa,aa)");
