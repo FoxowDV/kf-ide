@@ -29,8 +29,8 @@ pub struct Config {
 impl ::std::default::Default for Config {
     fn default() -> Self { 
         Self { 
-            font: "Consolas".into(),
-            style: "plain".into(),
+            font: "Consola".into(),
+            style: "Regular".into(),
             size: 12,
             language: UiLanguage::default(),
 
