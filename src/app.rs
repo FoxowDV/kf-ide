@@ -84,14 +84,44 @@ impl App {
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
         );
 
-         fonts.font_data.insert(
+        fonts.font_data.insert(
             "Consola-Bold".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLAB.TTF")).into(),
         );
 
-         fonts.font_data.insert(
+        fonts.font_data.insert(
             "Consola-Italic".to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/CONSOLAI.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Ubuntu-Regular".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.regular.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Ubuntu-Bold".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.bold.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Ubuntu-Italic".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/ubuntu.italic.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Hack-Regular".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Regular.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Hack-Bold".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Bold.TTF")).into(),
+        );
+
+        fonts.font_data.insert(
+            "Hack-Italic".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/Hack-Italic.TTF")).into(),
         );
 
         ctx.set_fonts(fonts);

@@ -66,6 +66,8 @@ impl App {
                         let fonts = vec![
                             "Arial",
                             "Consola",
+                            "Hack",
+                            "Ubuntu",
                         ];
                         for font in fonts {
                             ui.selectable_value(&mut self.config.font, font.to_string(), font);
