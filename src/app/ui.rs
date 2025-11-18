@@ -249,7 +249,11 @@ impl App {
                         ui.close();
                     }
                 });
-                ui.ctx().memory_mut(|mem| mem.request_focus(editor_id));
+
+                if !response.response.has_focus() {
+                    ui.ctx().memory_mut(|mem| mem.request_focus(editor_id));
+                }
+
         });
     }
 
