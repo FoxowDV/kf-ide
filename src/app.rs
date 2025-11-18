@@ -94,6 +94,11 @@ impl App {
             egui::FontData::from_static(include_bytes!("../fonts/Bodoni Bd BT Bold.ttf")).into(),
         );
 
+            fonts.font_data.insert(
+            "Consola".to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/CONSOLA.TTF")).into(),
+        );
+
         fonts.families.insert(
             egui::FontFamily::Name("Arial".into()),
             vec!["Arial-Regular".to_owned()],
