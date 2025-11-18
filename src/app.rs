@@ -21,6 +21,13 @@ use crate::document::Document;
 use crate::Config;
 use crate::translator::Translator;
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PathType {
+    WorkPath,
+    AssemblerPath,
+    DosEmulatorPath,
+}
+
 
 #[derive(Default)]
 pub struct App {
@@ -42,6 +49,7 @@ pub struct App {
     completer: Completer,
     selected_text: String,
     error_line: Option<usize>,
+    current_path_type: Option<PathType>,
 }
 
 impl App {
@@ -131,22 +139,35 @@ impl eframe::App for App {
 
         if let Some(path) = self.file_dialog.take_picked() {
             if path.exists() && !self.is_saving {
-                match std::fs::read_to_string(&path) {
-                    Ok(content) => {
-                        let mut new_doc = Document::new(
-                            path.file_name()
-                                .and_then(|n| n.to_str())
-                                .unwrap()
-                                .to_string(),
-                        );
-                        new_doc.content = content;
-                        new_doc.file_path = Some(path.clone());
-                        new_doc.is_modified = false;
-                        self.documents.push(new_doc);
-                        self.active_tab = self.documents.len() - 1;
+                
+                if path.is_dir() {
+                    let path_str = path.to_string_lossy().to_string();
+                    if let Some(path_type) = self.current_path_type.take() {
+                        match path_type {
+                            PathType::WorkPath => self.config.work_path = path_str,
+                            PathType::AssemblerPath => self.config.assembler_path = path_str,
+                            PathType::DosEmulatorPath => self.config.dos_emulator_path = path_str,
+                        }
                     }
-                    Err(e) => {
-                        eprintln!("Error al abrir el archivo: {}", e);
+                }
+                else {
+                    match std::fs::read_to_string(&path) {
+                        Ok(content) => {
+                            let mut new_doc = Document::new(
+                                path.file_name()
+                                    .and_then(|n| n.to_str())
+                                    .unwrap()
+                                    .to_string(),
+                            );
+                            new_doc.content = content;
+                            new_doc.file_path = Some(path.clone());
+                            new_doc.is_modified = false;
+                            self.documents.push(new_doc);
+                            self.active_tab = self.documents.len() - 1;
+                        }
+                        Err(e) => {
+                            eprintln!("Error al abrir el archivo: {}", e);
+                        }
                     }
                 }
             } else {

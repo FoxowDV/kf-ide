@@ -274,6 +274,7 @@ impl App {
                 let mut content = String::from("** Generación correcta del analizador léxico **\nArchivo guardado en /home/wallace/Documents/");
                 _ = egui::TextEdit::multiline(&mut content)
                     .code_editor()
+                    .font(egui::FontId::monospace(self.config.size as f32))
                     .min_size(ui.available_size())
                     .desired_width(f32::INFINITY)
                     .show(ui)
