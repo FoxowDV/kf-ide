@@ -22,15 +22,30 @@ impl App {
             .default_width(500.0)
             .show(ctx, |ui| {
                 ui.visuals_mut().striped = true;
-                self.show_tokens_table(ui);
-                self.show_symbols_table(ui);
+                //self.show_tokens_table(ui);
+                //self.show_symbols_table(ui);
+
+                ui.allocate_ui_with_layout(
+                    egui::Vec2::new(ui.available_width(), 300.0), 
+                    egui::Layout::top_down(egui::Align::Min),
+                    |ui| {
+                        self.show_tokens_table(ui);
+                    }
+                );
+                
+                ui.allocate_ui_with_layout(
+                    egui::Vec2::new(ui.available_width(), 300.0), 
+                    egui::Layout::top_down(egui::Align::Min),
+                    |ui| {
+                        self.show_symbols_table(ui);
+                    }
+                );
             });
     }
 
     pub fn show_tokens_table(&mut self, ui: &mut egui::Ui) {
-
-
-        ui.allocate_ui_with_layout(egui::Vec2::new(ui.available_width(), 18.0), 
+        ui.allocate_ui_with_layout(
+            egui::Vec2::new(ui.available_width(), 18.0), 
             egui::Layout::top_down(egui::Align::Center),
             |ui| {
                 ui.painter().rect_filled(
@@ -38,45 +53,50 @@ impl App {
                     egui::CornerRadius::same(0),
                     egui::Color32::WHITE
                 );
-            ui.label(RichText::new(" Tokens table").strong().size(15.0));
-        });
-
-        TableBuilder::new(ui)
-            .columns(Column::remainder(), 3)
-            .header(30.0, |mut header| {
-                header.col(|ui| {
-                    ui.heading(RichText::new("Token").size(14.0));
-                });
-                header.col(|ui| {
-                    ui.heading(RichText::new("Lexema").size(14.0));
-                });
-                header.col(|ui| {
-                    ui.heading(RichText::new(self.translator.t("[Line, Column]")).size(14.0));
-                });
-            })
-        .body(|mut body| {
-            let tokens = lex_program(self.documents[self.active_tab].content.as_str());
-            for token in &tokens {
-                dbg!(&token);
-                body.row(30.0, |mut row| {
-                    row.col(|ui| {
-                        ui.label(token.token.name());
-                    });
-                    row.col(|ui| {
-                        ui.label(token.token.value());
-                    });
-                    row.col(|ui| {
-                        ui.label(format!("({}, {})", token.position.line, token.position.col));
-                    });
-                });
+                ui.label(RichText::new(" Tokens table").strong().size(15.0));
             }
+        );
 
-        });
-
+        // barrita para tokens
+        egui::ScrollArea::vertical()
+            .id_source("tokens_scroll")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                TableBuilder::new(ui)
+                    .id_salt("tokens_table")
+                    .columns(Column::remainder(), 3)
+                    .header(30.0, |mut header| {
+                        header.col(|ui| {
+                            ui.heading(RichText::new("Token").size(14.0));
+                        });
+                        header.col(|ui| {
+                            ui.heading(RichText::new("Lexema").size(14.0));
+                        });
+                        header.col(|ui| {
+                            ui.heading(RichText::new(self.translator.t("[Line, Column]")).size(14.0));
+                        });
+                    })
+                    .body(|mut body| {
+                        let tokens = lex_program(self.documents[self.active_tab].content.as_str());
+                        for token in &tokens {
+                            body.row(30.0, |mut row| {
+                                row.col(|ui| {
+                                    ui.label(token.token.name());
+                                });
+                                row.col(|ui| {
+                                    ui.label(token.token.value());
+                                });
+                                row.col(|ui| {
+                                    ui.label(format!("({}, {})", token.position.line, token.position.col));
+                                });
+                            });
+                        }
+                    });
+            });
     }
 
     pub fn show_symbols_table(&mut self, ui: &mut egui::Ui) {
-        egui::TopBottomPanel::bottom("right_bottom_panel")
+        /*egui::TopBottomPanel::bottom("right_bottom_panel")
             .frame(
                 egui::Frame::default()
                     .outer_margin(0.0)
@@ -86,19 +106,28 @@ impl App {
             .default_height(ui.available_height() * 0.5)
             .min_height(ui.available_height() * 0.5)
             .show_inside(ui, |ui| {
-                ui.available_size();
+                ui.available_size();*/
 
-                ui.allocate_ui_with_layout(egui::Vec2::new(ui.available_width(), 18.0), 
-                    egui::Layout::top_down(egui::Align::Center), |ui| {
-                        ui.painter().rect_filled(
-                            ui.available_rect_before_wrap(),
-                            egui::CornerRadius::same(0),
-                            egui::Color32::WHITE
-                        );
-                        ui.label(RichText::new(self.translator.t(" Symbols table")).strong().size(15.0));
-                    });
+        ui.allocate_ui_with_layout(
+            egui::Vec2::new(ui.available_width(), 18.0), 
+            egui::Layout::top_down(egui::Align::Center),
+            |ui| {
+                ui.painter().rect_filled(
+                    ui.available_rect_before_wrap(),
+                    egui::CornerRadius::same(0),
+                    egui::Color32::WHITE
+                );
+                ui.label(RichText::new(self.translator.t(" Symbols table")).strong().size(15.0));
+            }
+        );
+
+        // ScrollArea para la tabla de símbolos
+        egui::ScrollArea::vertical()
+            .id_source("symbols_scroll")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
                 TableBuilder::new(ui)
-                    .id_salt("aa")
+                    .id_salt("symbols_table")
                     .columns(Column::remainder(), 4)
                     .header(30.0, |mut header| {
                         header.col(|ui| {
@@ -129,7 +158,8 @@ impl App {
                                 ui.label("(aaa,aa)");
                             });
                         });
+                    });
                 });
-            });
+            //});
     }
 }
