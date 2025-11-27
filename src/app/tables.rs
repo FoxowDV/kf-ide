@@ -26,7 +26,7 @@ impl App {
                 //self.show_symbols_table(ui);
 
                 ui.allocate_ui_with_layout(
-                    egui::Vec2::new(ui.available_width(), 300.0), 
+                    egui::Vec2::new(ui.available_width(), 400.0), 
                     egui::Layout::top_down(egui::Align::Min),
                     |ui| {
                         self.show_tokens_table(ui);
@@ -34,7 +34,7 @@ impl App {
                 );
                 
                 ui.allocate_ui_with_layout(
-                    egui::Vec2::new(ui.available_width(), 300.0), 
+                    egui::Vec2::new(ui.available_width(), 200.0), 
                     egui::Layout::top_down(egui::Align::Min),
                     |ui| {
                         self.show_symbols_table(ui);
