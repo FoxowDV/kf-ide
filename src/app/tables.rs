@@ -6,6 +6,8 @@ use egui_extras::{
 };
 use crate::app::App;
 
+use kf_compiler::lex_program;
+
 
 impl App {
     pub fn show_tables(&mut self, ctx: &egui::Context) {
@@ -53,17 +55,22 @@ impl App {
                 });
             })
         .body(|mut body| {
-            body.row(30.0, |mut row| {
-                row.col(|ui| {
-                    ui.label(self.translator.t("hello"));
+            let tokens = lex_program(self.documents[self.active_tab].content.as_str());
+            for token in &tokens {
+                dbg!(&token);
+                body.row(30.0, |mut row| {
+                    row.col(|ui| {
+                        ui.label(token.token.name());
+                    });
+                    row.col(|ui| {
+                        ui.label(token.token.value());
+                    });
+                    row.col(|ui| {
+                        ui.label(format!("({}, {})", token.position.line, token.position.col));
+                    });
                 });
-                row.col(|ui| {
-                    ui.label(self.translator.t("world"));
-                });
-                row.col(|ui| {
-                    ui.label("(aaa,aa)");
-                });
-            });
+            }
+
         });
 
     }

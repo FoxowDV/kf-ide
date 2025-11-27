@@ -153,7 +153,7 @@ impl App {
 
 
                 // Erorr
-                self.error_line = Some(5);
+                self.error_line = Some(1);
                 if let Some(error_line) = self.error_line {
                     let line_height = self.config.size as f32 * 1.15;
                     let y_offset = (error_line as f32) * line_height;

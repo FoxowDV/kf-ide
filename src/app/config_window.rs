@@ -3,6 +3,7 @@ use crate::app::App;
 use crate::ui_language::UiLanguage;
 use crate::translator::Translator;
 use crate::app::PathType;
+use crate::Config;
 
 #[derive(PartialEq)]
 pub enum ConfigTab {
@@ -42,7 +43,25 @@ impl App {
                 ui.horizontal(|ui| {
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if ui.button(self.translator.t("cancel")).clicked() {
+
+                            let cfg: Config = match confy::load("kf-ide") {
+                                Ok(cfg) => {
+                                    println!("Configuración cargada");
+                                    cfg
+                                },
+                                Err(e) => { 
+                                    eprintln!("Error: {}. Creando nueva configuración.", e);
+                                    let temp_conf = Config::default();
+                                    let _ = confy::store("kf-ide", &temp_conf);
+                                    temp_conf
+                                },
+                            };
+
+                            self.config = cfg;
+
                             self.is_config_open = false;
+
+
                         }
                         if ui.button(self.translator.t("accept")).clicked() {
                             self.translator = Translator::new(self.config.language);

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+kf_compiler = { git = "https://github.com/FoxowDV/kf-compiler.git"}
 eframe = "0.33"
 egui = { version = "0.33", features = ["serde"] }
 egui_extras = {version = "0.33", features = ["default", "all_loaders"]}
