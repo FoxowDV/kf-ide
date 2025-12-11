@@ -7,7 +7,14 @@ use egui_extras::{
 use crate::app::App;
 
 use kf_compiler::lex_program;
+use kf_compiler::parse_program;
 
+fn ejecutar(code: &str) -> String {
+    match parse_program(code) {
+        Ok(program) => format!("{:#?}", program),
+        Err(e) => format!("Error: {:#?}", e),
+    }
+}
 
 impl App {
     pub fn show_tables(&mut self, ctx: &egui::Context) {

@@ -1,6 +1,7 @@
 use eframe::egui;
 use crate::app::App;
 
+use kf_compiler::parse_program;
 
 impl App {
     pub fn show_menu_bar(&mut self, ui: &mut egui::Ui) {
@@ -92,6 +93,8 @@ impl App {
         ui.menu_button(self.translator.t("compile"), |ui| {
             if ui.add(egui::Button::new(self.translator.t("compile")).shortcut_text("CTRL+SHIFT+B")).clicked() {
                 println!("Compilar");
+                let result = parse_program(self.documents[self.active_tab].content.as_str());
+                println!("{:#?}", result);
                 ui.close();
             }
             if ui.add(egui::Button::new(self.translator.t("compile and run")).shortcut_text("CTRL+F6")).clicked() {
