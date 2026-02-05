@@ -9,7 +9,7 @@ use crate::app::App;
 use kf_compiler::lex_program;
 use kf_compiler::parse_program;
 
-fn ejecutar(code: &str) -> String {
+fn _ejecutar(code: &str) -> String {
     match parse_program(code) {
         Ok(program) => format!("{:#?}", program),
         Err(e) => format!("Error: {:#?}", e),
@@ -66,7 +66,7 @@ impl App {
 
         // barrita para tokens
         egui::ScrollArea::vertical()
-            .id_source("tokens_scroll")
+            .id_salt("tokens_scroll")
             .auto_shrink([false, false])
             .show(ui, |ui| {
                 TableBuilder::new(ui)
@@ -130,7 +130,7 @@ impl App {
 
         // ScrollArea para la tabla de símbolos
         egui::ScrollArea::vertical()
-            .id_source("symbols_scroll")
+            .id_salt("symbols_scroll")
             .auto_shrink([false, false])
             .show(ui, |ui| {
                 TableBuilder::new(ui)

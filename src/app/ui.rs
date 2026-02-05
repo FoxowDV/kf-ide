@@ -2,7 +2,7 @@ use eframe::egui;
 use crate::app::App;
 use chrono::Local;
 //use egui::{, Command};
-use egui_code_editor::{CodeEditor, Syntax};
+use egui_code_editor::{CodeEditor, Syntax, Error};
 use crate::syntax::kf::SyntaxExt;
 use crate::syntax::config_theme::make_theme_from_config;
 use crate::shortcuts::{NEW_FILE};
@@ -140,7 +140,14 @@ impl App {
                 let mut doc = self.documents[*&self.active_tab].clone();
                 let prev_content = doc.content.clone();
 
-                let response = CodeEditor::default()
+                let list_errors = vec![
+                    Error{line: 2, description:"aaa".to_string()},
+                    Error{line: 6, description:"aaa".to_string()},
+                ];
+
+                // self.c_line
+                // self.c_col
+                let mut editor = CodeEditor::default()
                     .id_source("code_editor")
                     .with_ui_fontsize(ui)
                     .with_rows(12)
@@ -148,28 +155,11 @@ impl App {
                     .with_theme(config_theme)
                     .with_syntax(syntax)
                     .with_numlines(true)
-                    .show_with_completer(ui, &mut doc.content, completer);
+                    .with_errors(list_errors);
 
+                let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);
+                //let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);
 
-
-                // Erorr
-                self.error_line = Some(1);
-                if let Some(error_line) = self.error_line {
-                    let line_height = self.config.size as f32 * 1.15;
-                    let y_offset = (error_line as f32) * line_height;
-                    
-                    let rect = egui::Rect::from_min_size(
-                        egui::pos2(response.response.rect.min.x, response.response.rect.min.y + y_offset),
-                        egui::vec2(response.response.rect.width(), line_height)
-                    );
-                    
-                    ui.painter().rect_filled(
-                        rect,
-                        0.0,
-                        egui::Color32::from_rgba_unmultiplied(255, 0, 0, 30)
-                    );
-                }
-                
                 let editor_id = response.response.id;
 
                 if doc.content != prev_content {
@@ -190,40 +180,21 @@ impl App {
 
 
                 // GET line and col
-                if let Some(state) = egui::TextEdit::load_state(ui.ctx(), response.response.id) {
-                    if let Some(cursor_range) = state.cursor.char_range() {
-                        let start = cursor_range.primary.index.min(cursor_range.secondary.index);
-                        let end = cursor_range.primary.index.max(cursor_range.secondary.index);
-                        if start < end && end <= doc.content.len() {
-                            self.selected_text = doc.content[start..end].to_string();
-                        }
+               // if let Some(state) = egui::TextEdit::load_state(ui.ctx(), response.response.id) {
+               //     if let Some(cursor_range) = state.cursor.char_range() {
+               //         let start = cursor_range.primary.index.min(cursor_range.secondary.index);
+               //         let end = cursor_range.primary.index.max(cursor_range.secondary.index);
+               //         if start < end && end <= doc.content.len() {
+               //             self.selected_text = doc.content[start..end].to_string();
+               //         }
 
-                        let cursor_pos = cursor_range.primary.index;
-                        let text_before_cursor = &doc.content[..cursor_pos.min(doc.content.len())];
-                        self.c_line = text_before_cursor.matches('\n').count() + 1;
-                        self.c_col = text_before_cursor.lines().last().map(|l| l.len()).unwrap_or(0) + 1;
-                    }
-                    
-                }
+               //         let cursor_pos = cursor_range.primary.index;
+               //         let text_before_cursor = &doc.content[..cursor_pos.min(doc.content.len())];
+               //         self.c_line = text_before_cursor.matches('\n').count() + 1;
+               //         self.c_col = text_before_cursor.lines().last().map(|l| l.len()).unwrap_or(0) + 1;
+               //     }
+               // }
                 
-                if self.c_line > 0 {
-                    let line_height = self.config.size as f32 * 1.15;
-                    let y_offset = ((self.c_line - 1) as f32) * line_height;
-
-                    let rect = egui::Rect::from_min_size(
-                    egui::pos2(
-                        response.response.rect.min.x, 
-                        response.response.rect.min.y + y_offset 
-                    ),
-                        egui::vec2(response.response.rect.width(), line_height)
-                    );
-                    
-                    ui.painter().rect_filled(
-                        rect,
-                        0.0,
-                        egui::Color32::from_rgba_unmultiplied(20, 20, 20, 20)
-                    );
-                }
 
                 self.documents[*&self.active_tab] = doc;
 

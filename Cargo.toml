@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 kf_compiler = { git = "https://github.com/FoxowDV/kf-compiler.git"}
+egui_code_editor = { git = "https://github.com/FoxowDV/egui_code_editor.git"}
 eframe = "0.33"
 egui = { version = "0.33", features = ["serde"] }
 egui_extras = {version = "0.33", features = ["default", "all_loaders"]}
@@ -12,6 +13,5 @@ egui-file-dialog = "0.12.0"
 confy = "0.3.1"
 serde = { version = "1.0", features = ["derive"] }
 chrono = "0.4"
-egui_code_editor = { version = "0.2" } 
 colorful = "0.2.2"
 arboard = "3.2"
