@@ -1,4 +1,4 @@
-use egui_code_editor::{Completer, Syntax};
+use egui_code_editor::{Completer, Syntax, Error};
 use crate::syntax::kf::SyntaxExt;
 
 mod menus;
@@ -52,7 +52,7 @@ pub struct App {
     translator: Translator,
     completer: Completer,
     selected_text: String,
-    error_line: Option<usize>,
+    list_errors: Vec<Error>,
     current_path_type: Option<PathType>,
 }
 
@@ -72,6 +72,7 @@ impl App {
         app.completer = Completer::new_with_syntax(&syntax).with_user_words();
         app.compile_errors = Vec::new();
         app.output_content = String::new();
+        app.list_errors = vec![];
         app
     }
 

@@ -140,7 +140,7 @@ impl App {
                 let mut doc = self.documents[*&self.active_tab].clone();
                 let prev_content = doc.content.clone();
 
-                let list_errors = vec![
+                self.list_errors = vec![
                     Error{line: 2, description:"aaa".to_string()},
                     Error{line: 6, description:"aaa".to_string()},
                 ];
@@ -155,7 +155,7 @@ impl App {
                     .with_theme(config_theme)
                     .with_syntax(syntax)
                     .with_numlines(true)
-                    .with_errors(list_errors);
+                    .with_errors(self.list_errors.clone());
 
                 let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);
                 //let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);
