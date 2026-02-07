@@ -21,6 +21,8 @@ use crate::document::Document;
 use crate::Config;
 use crate::translator::Translator;
 
+use kf_compiler::parser::parser::ParseError;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PathType {
     WorkPath,
@@ -35,6 +37,8 @@ pub struct App {
     pub active_tab: usize,
     pub config_tab: ConfigTab,
     pub next_document_id: usize,
+    pub compile_errors: Vec<ParseError>,  
+    pub output_content: String, 
     document_to_save_index: Option<usize>,
     is_modal_open: bool,
     is_closing: bool,
@@ -66,6 +70,8 @@ impl App {
         app.add_document("Program1.kf".to_string());
         app.translator = Translator::new(app.config.language);
         app.completer = Completer::new_with_syntax(&syntax).with_user_words();
+        app.compile_errors = Vec::new();
+        app.output_content = String::new();
         app
     }
 

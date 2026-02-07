@@ -245,8 +245,10 @@ impl App {
                     });
                 });
 
+                ui.separator();
 
-                let mut content = String::from("** Generación correcta del analizador léxico **\nArchivo guardado en /home/wallace/Documents/");
+
+                let mut content = self.output_content.clone();
                 _ = egui::TextEdit::multiline(&mut content)
                     .code_editor()
                     .font(egui::FontId::monospace(self.config.size as f32))

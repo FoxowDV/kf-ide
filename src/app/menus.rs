@@ -94,7 +94,19 @@ impl App {
             if ui.add(egui::Button::new(self.translator.t("compile")).shortcut_text("CTRL+SHIFT+B")).clicked() {
                 println!("Compilar");
                 let result = parse_program(self.documents[self.active_tab].content.as_str());
-                println!("{:#?}", result);
+
+                match result {
+                    Ok(program) => {
+                        println!("{:#?}", program);
+                        self.output_content = "Compilacion exitosa".to_string();
+                        self.compile_errors.clear();
+                    }
+                    Err(error) => {
+                        println!("Error: {:#?}", error);
+                        self.output_content = format!("Error: {}", error.message);
+                        self.compile_errors = vec![error]; 
+                    }
+                }
                 ui.close();
             }
             if ui.add(egui::Button::new(self.translator.t("compile and run")).shortcut_text("CTRL+F6")).clicked() {
