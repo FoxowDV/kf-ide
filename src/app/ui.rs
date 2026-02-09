@@ -140,13 +140,16 @@ impl App {
                 let mut doc = self.documents[*&self.active_tab].clone();
                 let prev_content = doc.content.clone();
 
-                self.list_errors = vec![
-                    Error{line: 2, description:"aaa".to_string()},
-                    Error{line: 6, description:"aaa".to_string()},
-                ];
+                //self.list_errors = vec![
+                //    Error{line: 2, description:"aaa".to_string()},
+                //    Error{line: 6, description:"aaa".to_string()},
+                //];
 
                 // self.c_line
                 // self.c_col
+
+                let list_errors = self.editor_errors.clone();
+
                 let mut editor = CodeEditor::default()
                     .id_source("code_editor")
                     .with_ui_fontsize(ui)
@@ -155,7 +158,7 @@ impl App {
                     .with_theme(config_theme)
                     .with_syntax(syntax)
                     .with_numlines(true)
-                    .with_errors(self.list_errors.clone());
+                    .with_errors(list_errors); 
 
                 let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);
                 //let (response, _, _) = editor.show_with_completer(ui, &mut doc.content, completer);

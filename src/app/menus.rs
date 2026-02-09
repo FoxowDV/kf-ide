@@ -100,17 +100,35 @@ impl App {
                         println!("{:#?}", program);
                         self.output_content = "Compilacion exitosa".to_string();
                         self.compile_errors.clear();
+                        self.editor_errors.clear();
                     }
                     Err(error) => {
                         println!("Error: {:#?}", error);
-                        self.output_content = format!("Error: {}", error.message);
-                        self.compile_errors = vec![error]; 
+                        self.output_content = format!("Error: {}", error.message); 
+                        self.editor_errors.clear();
+                        self.update_compile_errors(error);
                     }
                 }
                 ui.close();
             }
             if ui.add(egui::Button::new(self.translator.t("compile and run")).shortcut_text("CTRL+F6")).clicked() {
                 println!("Compilar y correr");
+                let result = parse_program(self.documents[self.active_tab].content.as_str());
+            
+                match result {
+                    Ok(program) => {
+                        println!("{:#?}", program);
+                        self.output_content = "Compilacion exitosa\n Ejecutando programa...".to_string();
+                        self.compile_errors.clear();
+                        self.editor_errors.clear();
+                        
+                    }
+                    Err(error) => {
+                        println!("Error: {:#?}", error);
+                        self.editor_errors.clear();
+                        self.update_compile_errors(error);
+                    }
+                }
                 ui.close();
             }
         });
@@ -190,12 +208,41 @@ impl App {
             }
             if ui.add(egui::Button::image(egui::Image::new(compile_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
-                println!("compile");    
-            }
+                println!("compile"); 
+                let result = parse_program(self.documents[self.active_tab].content.as_str());
+                match result {
+                    Ok(program) => {
+                        println!("{:#?}", program);
+                        self.output_content = "Compilacion exitosa".to_string();
+                        self.compile_errors.clear();
+                        self.editor_errors.clear();
+                    }
+                      Err(error) => {
+                        println!("Error: {:#?}", error);
+                        self.editor_errors.clear();
+                        self.update_compile_errors(error);
+                    }
+                }                
+            }   
             if ui.add(egui::Button::image(egui::Image::new(compile_and_run_image).fit_to_exact_size(image_size))
                 .min_size(image_size).frame_when_inactive(false)).clicked() {
-                println!("compile and run");    
-            }
-        });
-    }
+                println!("compile and run");
+                let result = parse_program(self.documents[self.active_tab].content.as_str());
+                match result {
+                    Ok(program) => {
+                        println!("{:#?}", program);
+                        self.output_content = "✓ Compilación exitosa\n✓ Ejecutando...".to_string();
+                        self.compile_errors.clear();
+                        self.editor_errors.clear();
+                    }
+                    Err(error) => {
+                        println!("Error: {:#?}", error);
+                        self.editor_errors.clear();
+                        self.update_compile_errors(error);
+                    }
+                }
+            }    
+    });
 }
+}
+

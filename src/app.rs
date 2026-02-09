@@ -39,6 +39,7 @@ pub struct App {
     pub next_document_id: usize,
     pub compile_errors: Vec<ParseError>,  
     pub output_content: String, 
+    pub editor_errors: Vec<Error>, 
     document_to_save_index: Option<usize>,
     is_modal_open: bool,
     is_closing: bool,
@@ -73,6 +74,7 @@ impl App {
         app.compile_errors = Vec::new();
         app.output_content = String::new();
         app.list_errors = vec![];
+        app.editor_errors = Vec::new();
         app
     }
 
@@ -363,4 +365,43 @@ impl App {
             .initial_directory(PathBuf::from(work_path))
             .default_file_name(filename)
     }
+    fn extract_error_line(error_message: &str) -> Option<usize> {
+        if let Some(arrow_pos) = error_message.find("--> ") {
+            let after_arrow = &error_message[arrow_pos + 4..];
+
+            if let Some(colon_pos) = after_arrow.find(':') {
+                let line_str = &after_arrow[..colon_pos];
+
+                if let Ok(line_num) = line_str.trim().parse::<usize>() {
+                    return Some(line_num);
+                }
+            }
+        }
+        None
+    }
+    fn update_compile_errors(&mut self, error: ParseError){
+        if let Some(line) = Self::extract_error_line(&error.message) {
+            self.editor_errors.push(Error {
+                line,
+                description: error.message.clone(),
+            });
+        }
+        self.output_content = if let Some(span) = &error.span {
+            format!(
+                "ERROR DE COMPILACION\n\n{}\n\nLInea: {}, Columna: {}", 
+                error.message,
+                span.start.line,
+                span.start.col
+            )
+        } else {
+            if let Some(line) = Self::extract_error_line(&error.message) {
+                format!("ERROR DE COMPILACION\n\n{}\n\nLinea: {}", error.message, line)
+            } else {
+                format!("ERROR DE COMPILACION\n\n{}", error.message)
+            }
+        };
+        
+        self.compile_errors = vec![error];
+    }
 }
+
