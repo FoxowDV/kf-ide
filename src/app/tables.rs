@@ -6,6 +6,8 @@ use egui_extras::{
 };
 use crate::app::App;
 
+use crate::app::symbol_analyzer::{extract_symbols, SymbolType};
+
 use kf_compiler::lex_program;
 use kf_compiler::parse_program;
 
@@ -151,20 +153,42 @@ impl App {
                         });
                     })
                     .body(|mut body| {
-                        body.row(30.0, |mut row| {
-                            row.col(|ui| {
-                                ui.label(self.translator.t("hello"));
-                            });
-                            row.col(|ui| {
-                                ui.label(self.translator.t("world"));
-                            });
-                            row.col(|ui| {
-                                ui.label("(aaa,aa)");
-                            });
-                            row.col(|ui| {
-                                ui.label("(aaa,aa)");
-                            });
-                        });
+                        let code = &self.documents[self.active_tab].content;
+                        match parse_program(code.as_str()) {
+                            Ok(program) => {
+                                let symbols = extract_symbols(&program);
+                                let filtered: Vec<_> = symbols.iter()
+                                    .filter(|s| matches!(
+                                        s.symbol_type, 
+                                        SymbolType::Variable |   
+                                        SymbolType::Constant 
+                                    ))
+                                    .collect();
+                                for symbol in filtered {
+                                    body.row(30.0, |mut row| {
+                                        row.col(|ui| {
+                                            ui.label(&symbol.name);  
+                                        });
+                                        row.col(|ui| {
+                                            ui.label(&symbol.data_type);  
+                                        });
+                                        row.col(|ui| {
+                                            ui.label(symbol.value.as_deref().unwrap_or("-"));  
+                                        });
+                                        row.col(|ui| {
+                                            let varconst = match symbol.symbol_type {
+                                                SymbolType::Variable => "Variable",   
+                                                SymbolType::Constant => "Constant",
+                                                _ => "-"
+                                            };
+                                            ui.label(varconst);  
+                                        });
+                                    });
+                                }
+                            }
+                            Err(_) => {
+                            }
+                        }
                     });
                 });
             //});
