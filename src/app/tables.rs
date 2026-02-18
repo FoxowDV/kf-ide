@@ -187,11 +187,11 @@ impl App {
     }
 
     pub fn section_header(&self, ui: &mut egui::Ui, title: &str) {
-        let header_color = egui::Color32::from_rgb(60, 90, 160);
-        let text_color = egui::Color32::WHITE;
+        let header_color = egui::Color32::from_rgb(200, 200, 250);
+        let text_color = egui::Color32::BLACK;
 
         ui.allocate_ui_with_layout(
-            egui::Vec2::new(ui.available_width(), 24.0),
+            egui::Vec2::new(ui.available_width(), 20.0),
             egui::Layout::top_down(egui::Align::Center),
             |ui| {
                 ui.painter().rect_filled(
