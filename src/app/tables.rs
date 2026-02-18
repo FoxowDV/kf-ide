@@ -6,10 +6,14 @@ use egui_extras::{
 };
 use crate::app::App;
 
-use crate::app::symbol_analyzer::{extract_symbols, SymbolType};
+//use crate::app::symbol_analyzer::{extract_symbols, SymbolType};
 
 use kf_compiler::lex_program;
 use kf_compiler::parse_program;
+use kf_compiler::{
+    extract_symbols, 
+    SymbolType
+};
 
 fn _ejecutar(code: &str) -> String {
     match parse_program(code) {
@@ -31,8 +35,6 @@ impl App {
             .default_width(500.0)
             .show(ctx, |ui| {
                 ui.visuals_mut().striped = true;
-                //self.show_tokens_table(ui);
-                //self.show_symbols_table(ui);
 
                 ui.allocate_ui_with_layout(
                     egui::Vec2::new(ui.available_width(), 400.0), 
@@ -43,7 +45,7 @@ impl App {
                 );
                 
                 ui.allocate_ui_with_layout(
-                    egui::Vec2::new(ui.available_width(), 200.0), 
+                    egui::Vec2::new(ui.available_width(), ui.available_height()), 
                     egui::Layout::top_down(egui::Align::Min),
                     |ui| {
                         self.show_symbols_table(ui);
@@ -62,7 +64,7 @@ impl App {
                     egui::CornerRadius::same(0),
                     egui::Color32::WHITE
                 );
-                ui.label(RichText::new(" Tokens table").strong().size(15.0));
+                self.section_header(ui, "Tokens table");
             }
         );
 
@@ -105,17 +107,6 @@ impl App {
     }
 
     pub fn show_symbols_table(&mut self, ui: &mut egui::Ui) {
-        /*egui::TopBottomPanel::bottom("right_bottom_panel")
-            .frame(
-                egui::Frame::default()
-                    .outer_margin(0.0)
-                    .inner_margin(0.0)
-            )
-            .resizable(true)
-            .default_height(ui.available_height() * 0.5)
-            .min_height(ui.available_height() * 0.5)
-            .show_inside(ui, |ui| {
-                ui.available_size();*/
 
         ui.allocate_ui_with_layout(
             egui::Vec2::new(ui.available_width(), 18.0), 
@@ -126,7 +117,8 @@ impl App {
                     egui::CornerRadius::same(0),
                     egui::Color32::WHITE
                 );
-                ui.label(RichText::new(self.translator.t(" Symbols table")).strong().size(15.0));
+
+                self.section_header(ui, "Tokens table");
             }
         );
 
@@ -137,8 +129,11 @@ impl App {
             .show(ui, |ui| {
                 TableBuilder::new(ui)
                     .id_salt("symbols_table")
-                    .columns(Column::remainder(), 4)
-                    .header(30.0, |mut header| {
+                    .columns(Column::remainder(), 5)
+                    .header(24.0, |mut header| {
+                        header.col(|ui| {
+                            ui.heading(RichText::new(self.translator.t("Scope")).size(14.0));
+                        });
                         header.col(|ui| {
                             ui.heading(RichText::new(self.translator.t("Identifier")).size(14.0));
                         });
@@ -157,15 +152,11 @@ impl App {
                         match parse_program(code.as_str()) {
                             Ok(program) => {
                                 let symbols = extract_symbols(&program);
-                                let filtered: Vec<_> = symbols.iter()
-                                    .filter(|s| matches!(
-                                        s.symbol_type, 
-                                        SymbolType::Variable |   
-                                        SymbolType::Constant 
-                                    ))
-                                    .collect();
-                                for symbol in filtered {
+                                for symbol in symbols {
                                     body.row(30.0, |mut row| {
+                                        row.col(|ui| {
+                                            ui.label(&symbol.scope);  
+                                        });
                                         row.col(|ui| {
                                             ui.label(&symbol.name);  
                                         });
@@ -179,7 +170,8 @@ impl App {
                                             let varconst = match symbol.symbol_type {
                                                 SymbolType::Variable => "Variable",   
                                                 SymbolType::Constant => "Constant",
-                                                _ => "-"
+                                                SymbolType::Function => "Function",
+                                                SymbolType::Parameter => "Parameter",
                                             };
                                             ui.label(varconst);  
                                         });
@@ -193,4 +185,23 @@ impl App {
                 });
             //});
     }
+
+    pub fn section_header(&self, ui: &mut egui::Ui, title: &str) {
+        let header_color = egui::Color32::from_rgb(60, 90, 160);
+        let text_color = egui::Color32::WHITE;
+
+        ui.allocate_ui_with_layout(
+            egui::Vec2::new(ui.available_width(), 24.0),
+            egui::Layout::top_down(egui::Align::Center),
+            |ui| {
+                ui.painter().rect_filled(
+                    ui.available_rect_before_wrap(),
+                    egui::CornerRadius::same(0),
+                    header_color,
+                );
+                ui.label(RichText::new(title).strong().size(14.0).color(text_color));
+            },
+        );
+    }
+
 }

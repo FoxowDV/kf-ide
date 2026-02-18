@@ -1,12 +1,10 @@
 use egui_code_editor::{Completer, Syntax, Error};
 use crate::syntax::kf::SyntaxExt;
 
-
 mod menus;
 mod ui;
 mod tables;
 mod config_window;
-mod symbol_analyzer; 
 
 
 use config_window::ConfigTab;

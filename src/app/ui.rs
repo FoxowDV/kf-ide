@@ -2,7 +2,7 @@ use eframe::egui;
 use crate::app::App;
 use chrono::Local;
 //use egui::{, Command};
-use egui_code_editor::{CodeEditor, Syntax, Error};
+use egui_code_editor::{CodeEditor, Syntax};
 use crate::syntax::kf::SyntaxExt;
 use crate::syntax::config_theme::make_theme_from_config;
 use crate::shortcuts::{NEW_FILE};
