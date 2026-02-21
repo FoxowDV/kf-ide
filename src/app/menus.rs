@@ -92,15 +92,11 @@ impl App {
     pub fn show_compile_menu(&mut self, ui: &mut egui::Ui) {
         ui.menu_button(self.translator.t("compile"), |ui| {
             if ui.add(egui::Button::new(self.translator.t("compile")).shortcut_text("CTRL+SHIFT+B")).clicked() {
-                println!("Compilar");
                 let result = parse_program(self.documents[self.active_tab].content.as_str());
 
                 match result {
                     Ok(program) => {
-                        println!("{:#?}", program);
-                        self.output_content = "Compilacion exitosa".to_string();
-                        self.compile_errors.clear();
-                        self.editor_errors.clear();
+                        self.compile(program);
                     }
                     Err(error) => {
                         println!("Error: {:#?}", error);
@@ -117,11 +113,7 @@ impl App {
             
                 match result {
                     Ok(program) => {
-                        println!("{:#?}", program);
-                        self.output_content = "Compilacion exitosa\n Ejecutando programa...".to_string();
-                        self.compile_errors.clear();
-                        self.editor_errors.clear();
-                        
+                        self.compile_and_run(program);
                     }
                     Err(error) => {
                         println!("Error: {:#?}", error);
@@ -212,10 +204,7 @@ impl App {
                 let result = parse_program(self.documents[self.active_tab].content.as_str());
                 match result {
                     Ok(program) => {
-                        println!("{:#?}", program);
-                        self.output_content = "Compilacion exitosa".to_string();
-                        self.compile_errors.clear();
-                        self.editor_errors.clear();
+                        self.compile_and_run(program);
                     }
                       Err(error) => {
                         println!("Error: {:#?}", error);
@@ -230,10 +219,7 @@ impl App {
                 let result = parse_program(self.documents[self.active_tab].content.as_str());
                 match result {
                     Ok(program) => {
-                        println!("{:#?}", program);
-                        self.output_content = "✓ Compilación exitosa\n✓ Ejecutando...".to_string();
-                        self.compile_errors.clear();
-                        self.editor_errors.clear();
+                        self.compile_and_run(program);
                     }
                     Err(error) => {
                         println!("Error: {:#?}", error);

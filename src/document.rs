@@ -18,12 +18,4 @@ impl Document {
         }
     }
 
-    pub fn _open(name: String, content: String) -> Self {
-        Self {
-            name,
-            content,
-            is_modified: false,
-            file_path: None,
-        }
-    }
 }

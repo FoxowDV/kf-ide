@@ -88,8 +88,7 @@ impl App {
                         });
                     })
                     .body(|mut body| {
-                        let tokens = lex_program(self.documents[self.active_tab].content.as_str());
-                        for token in &tokens {
+                        for token in &self.tokens {
                             body.row(30.0, |mut row| {
                                 row.col(|ui| {
                                     ui.label(token.token.name());
@@ -148,11 +147,7 @@ impl App {
                         });
                     })
                     .body(|mut body| {
-                        let code = &self.documents[self.active_tab].content;
-                        match parse_program(code.as_str()) {
-                            Ok(program) => {
-                                let symbols = extract_symbols(&program);
-                                for symbol in symbols {
+                                for symbol in &self.symbols {
                                     body.row(30.0, |mut row| {
                                         row.col(|ui| {
                                             ui.label(&symbol.scope);  
@@ -178,10 +173,7 @@ impl App {
                                     });
                                 }
                             }
-                            Err(_) => {
-                            }
-                        }
-                    });
+                    );
                 });
             //});
     }

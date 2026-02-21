@@ -224,8 +224,10 @@ impl App {
                     }
                 });
 
-                if !response.response.has_focus() {
-                    ui.ctx().memory_mut(|mem| mem.request_focus(editor_id));
+                if self.is_modal_open {
+                    if !response.response.has_focus() {
+                        ui.ctx().memory_mut(|mem| mem.request_focus(editor_id));
+                    }
                 }
 
         });

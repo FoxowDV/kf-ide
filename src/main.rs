@@ -12,6 +12,9 @@ use app::App;
 use splash::Splash;
 use config::Config;
 
+
+
+
 fn main() -> Result<(), eframe::Error> {
     let cfg: Config = match confy::load("kf-ide") {
         Ok(cfg) => {

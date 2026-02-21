@@ -22,7 +22,15 @@ use crate::document::Document;
 use crate::Config;
 use crate::translator::Translator;
 
-use kf_compiler::parser::parser::ParseError;
+use kf_compiler::parser::parser::{
+    ParseError,
+    Program
+};
+
+use kf_compiler::{
+    extract_symbols, 
+    lex_program
+};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PathType {
@@ -41,6 +49,8 @@ pub struct App {
     pub compile_errors: Vec<ParseError>,  
     pub output_content: String, 
     pub editor_errors: Vec<Error>, 
+    pub tokens: Vec<kf_compiler::TokenWithPosition>,
+    pub symbols: Vec<kf_compiler::parser::symbol_analyzer::Symbol>,
     document_to_save_index: Option<usize>,
     is_modal_open: bool,
     is_closing: bool,
@@ -76,6 +86,8 @@ impl App {
         app.output_content = String::new();
         app.list_errors = vec![];
         app.editor_errors = Vec::new();
+        app.tokens = Vec::new();
+        app.symbols = Vec::new();
         app
     }
 
@@ -403,6 +415,22 @@ impl App {
         };
         
         self.compile_errors = vec![error];
+    }
+
+    fn compile(&mut self, program: Program) {
+        self.output_content = "Compilacion exitosa".to_string();
+        self.compile_errors.clear();
+        self.editor_errors.clear();
+        self.tokens = lex_program(self.documents[self.active_tab].content.as_str());
+        self.symbols = extract_symbols(&program);
+    }
+
+    fn compile_and_run(&mut self, program: Program) {
+        self.output_content = "Compilacion exitosa".to_string();
+        self.compile_errors.clear();
+        self.editor_errors.clear();
+        self.tokens = lex_program(self.documents[self.active_tab].content.as_str());
+        self.symbols = extract_symbols(&program);
     }
 }
 
