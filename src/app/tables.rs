@@ -6,12 +6,9 @@ use egui_extras::{
 };
 use crate::app::App;
 
-//use crate::app::symbol_analyzer::{extract_symbols, SymbolType};
 
-use kf_compiler::lex_program;
 use kf_compiler::parse_program;
 use kf_compiler::{
-    extract_symbols, 
     SymbolType
 };
 

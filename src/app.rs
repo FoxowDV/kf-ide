@@ -29,7 +29,8 @@ use kf_compiler::parser::parser::{
 
 use kf_compiler::{
     extract_symbols, 
-    lex_program
+    lex_program,
+    SemanticError,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -392,6 +393,7 @@ impl App {
         }
         None
     }
+
     fn update_compile_errors(&mut self, error: ParseError){
         if let Some(line) = Self::extract_error_line(&error.message) {
             self.editor_errors.push(Error {
@@ -417,12 +419,38 @@ impl App {
         self.compile_errors = vec![error];
     }
 
+    fn update_semantic_errors(&mut self, error: SemanticError) {
+        if let Some(span) = &error.span {
+            self.editor_errors.push(Error {
+                line: span.start.line,
+                description: error.message.clone(),
+            });
+            self.output_content = format!(
+                "ERROR SEMANTICO\n\n{}\n\nLinea: {}, Columna: {}",
+                error.message,
+                span.start.line,
+                span.start.col
+            );
+        } else {
+            self.output_content = format!("ERROR SEMANTICO\n\n{}", error.message);
+        }
+    }
+
     fn compile(&mut self, program: Program) {
         self.output_content = "Compilacion exitosa".to_string();
         self.compile_errors.clear();
         self.editor_errors.clear();
         self.tokens = lex_program(self.documents[self.active_tab].content.as_str());
-        self.symbols = extract_symbols(&program);
+        match extract_symbols(&program) {
+            Ok(symbols) => {
+                self.symbols = symbols;
+                self.output_content = "Compilación exitosa".to_string();
+            }
+            Err(error) => {
+                self.symbols.clear();
+                self.update_semantic_errors(error);
+            }
+        }
     }
 
     fn compile_and_run(&mut self, program: Program) {
@@ -430,7 +458,16 @@ impl App {
         self.compile_errors.clear();
         self.editor_errors.clear();
         self.tokens = lex_program(self.documents[self.active_tab].content.as_str());
-        self.symbols = extract_symbols(&program);
+        match extract_symbols(&program) {
+            Ok(symbols) => {
+                self.symbols = symbols;
+                self.output_content = "Compilación exitosa".to_string();
+            }
+            Err(error) => {
+                self.symbols.clear();
+                self.update_semantic_errors(error);
+            }
+        }
     }
 }
 
