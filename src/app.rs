@@ -15,6 +15,7 @@ use egui_file_dialog::FileDialog;
 use std::{
     path::PathBuf, 
     sync::Arc,
+    fs,
 };
 
 use crate::document::Document;
@@ -31,6 +32,8 @@ use kf_compiler::{
     extract_symbols, 
     lex_program,
     SemanticError,
+    instructions_to_string,
+    TACGenerator,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -444,6 +447,11 @@ impl App {
         match extract_symbols(&program) {
             Ok(symbols) => {
                 self.symbols = symbols;
+                 
+                let instructions = TACGenerator::generate(&program);
+                let tac_output = instructions_to_string(&instructions);
+                println!("{}", tac_output);
+
                 self.output_content = "Compilación exitosa".to_string();
             }
             Err(error) => {
@@ -461,6 +469,23 @@ impl App {
         match extract_symbols(&program) {
             Ok(symbols) => {
                 self.symbols = symbols;
+
+                let instructions = TACGenerator::generate(&program);
+                let tac_output = instructions_to_string(&instructions);
+                println!("{}", tac_output);
+
+                let tac_filename = self.documents[self.active_tab].name.as_str()
+                    .strip_suffix(".kf")
+                    .unwrap_or(self.documents[self.active_tab].name.as_str())
+                    .to_string() + ".tac";
+            
+     
+                    fs::write(&tac_filename, &tac_output)
+                    .unwrap_or_else(|err| {
+                        eprintln!("Error writing '{}': {}", tac_filename, err);
+                    });
+                
+
                 self.output_content = "Compilación exitosa".to_string();
             }
             Err(error) => {
