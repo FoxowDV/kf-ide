@@ -452,6 +452,22 @@ impl App {
                 let tac_output = instructions_to_string(&instructions);
                 println!("{}", tac_output);
 
+                let tac_path = if let Some(ref file_path) = self.documents[self.active_tab].file_path {
+                    file_path.with_extension("tac")
+                } else {
+                    PathBuf::from(
+                        self.documents[self.active_tab].name.as_str()
+                            .strip_suffix(".kf")
+                            .unwrap_or(self.documents[self.active_tab].name.as_str())
+                            .to_string() + ".tac"
+                    )
+                };
+
+                fs::write(&tac_path, &tac_output)
+                    .unwrap_or_else(|err| {
+                        eprintln!("Error writing '{}': {}", tac_path.display(), err);
+                    });
+
                 self.output_content = "Compilación exitosa".to_string();
             }
             Err(error) => {
@@ -474,15 +490,20 @@ impl App {
                 let tac_output = instructions_to_string(&instructions);
                 println!("{}", tac_output);
 
-                let tac_filename = self.documents[self.active_tab].name.as_str()
-                    .strip_suffix(".kf")
-                    .unwrap_or(self.documents[self.active_tab].name.as_str())
-                    .to_string() + ".tac";
-            
-     
-                    fs::write(&tac_filename, &tac_output)
+                let tac_path = if let Some(ref file_path) = self.documents[self.active_tab].file_path {
+                    file_path.with_extension("tac")
+                } else {
+                    PathBuf::from(
+                        self.documents[self.active_tab].name.as_str()
+                            .strip_suffix(".kf")
+                            .unwrap_or(self.documents[self.active_tab].name.as_str())
+                            .to_string() + ".tac"
+                    )
+                };
+
+                fs::write(&tac_path, &tac_output)
                     .unwrap_or_else(|err| {
-                        eprintln!("Error writing '{}': {}", tac_filename, err);
+                        eprintln!("Error writing '{}': {}", tac_path.display(), err);
                     });
                 
 
