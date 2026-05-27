@@ -1,5 +1,6 @@
 use egui_code_editor::{Completer, Syntax, Error};
 use crate::syntax::kf::SyntaxExt;
+use kf_compiler::generate_asm8086;
 
 mod menus;
 mod ui;
@@ -509,7 +510,7 @@ impl App {
 
                 let base_name = self.documents[self.active_tab].name.as_str()
                         .strip_suffix(".kf")
-                        .unwrap_or(self.documents[self.active_tab].na
+                        .unwrap_or(self.documents[self.active_tab].name.as_str());
                     let asm_output = generate_asm8086(&instructions);
 
                     let asm_filename = format!("{}.asm", base_name);
