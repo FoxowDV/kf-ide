@@ -490,7 +490,6 @@ impl App {
 
                 let instructions = TACGenerator::generate(&program);
                 let tac_output = instructions_to_string(&instructions);
-                println!("{}", tac_output);
 
                 let tac_path = if let Some(ref file_path) = self.documents[self.active_tab].file_path {
                     file_path.with_extension("tac")
@@ -507,20 +506,41 @@ impl App {
                     .unwrap_or_else(|err| {
                         eprintln!("Error writing '{}': {}", tac_path.display(), err);
                     });
+                //
 
-                let base_name = self.documents[self.active_tab].name.as_str()
-                        .strip_suffix(".kf")
-                        .unwrap_or(self.documents[self.active_tab].name.as_str());
-                    let asm_output = generate_asm8086(&instructions);
+                //let base_name = self.documents[self.active_tab].name.as_str()
+                //        .strip_suffix(".kf")
+                //        .unwrap_or(self.documents[self.active_tab].name.as_str());
 
-                    let asm_filename = format!("{}.asm", base_name);
+                //    let asm_filename = format!("{}.asm", base_name);
 
-                    fs::write(&asm_filename, &asm_output)
-                        .unwrap_or_else(|err| {
-                            eprintln!("Error writing '{}': {}", asm_filename, err);
-                        });
-                
+                //    fs::write(&asm_filename, &asm_output)
+                //        .unwrap_or_else(|err| {
+                //            eprintln!("Error writing '{}': {}", asm_filename, err);
+                //        });
+                //
+                //   // asm
+
+                let asm_output = generate_asm8086(&instructions);
+
+                let asm_path = if let Some(ref file_path) = self.documents[self.active_tab].file_path {
+                    file_path.with_extension("asm")
+                } else {
+                    PathBuf::from(
+                        self.documents[self.active_tab].name.as_str()
+                            .strip_suffix(".kf")
+                            .unwrap_or(self.documents[self.active_tab].name.as_str())
+                            .to_string() + ".asm"
+                    )
+                };
+
+                fs::write(&asm_path, &asm_output)
+                    .unwrap_or_else(|err| {
+                        eprintln!("Error writing '{}': {}", asm_path.display(), err);
+                    });
+
                 self.output_content = "Compilación exitosa".to_string();
+
             }
             Err(error) => {
                 self.symbols.clear();
