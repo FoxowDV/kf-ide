@@ -34,6 +34,7 @@ use kf_compiler::{
     SemanticError,
     instructions_to_string,
     TACGenerator,
+    
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -484,8 +485,19 @@ impl App {
                     .unwrap_or_else(|err| {
                         eprintln!("Error writing '{}': {}", tac_filename, err);
                     });
-                
 
+                let base_name = self.documents[self.active_tab].name.as_str()
+                        .strip_suffix(".kf")
+                        .unwrap_or(self.documents[self.active_tab].na
+                    let asm_output = generate_asm8086(&instructions);
+
+                    let asm_filename = format!("{}.asm", base_name);
+
+                    fs::write(&asm_filename, &asm_output)
+                        .unwrap_or_else(|err| {
+                            eprintln!("Error writing '{}': {}", asm_filename, err);
+                        });
+                
                 self.output_content = "Compilación exitosa".to_string();
             }
             Err(error) => {
